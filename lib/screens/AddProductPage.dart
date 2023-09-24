@@ -158,9 +158,9 @@ class _AddProductPageState extends State<AddProductPage> {
 
             // Add Product
             CustomButton(
-              onTap: () {
+              onTap: () async {
                 FocusManager.instance.primaryFocus?.unfocus();
-                sendProductToFireStore(
+                await sendProductToFireStore(
                   context,
                   modelController,
                   descriptionController,
@@ -198,7 +198,7 @@ class _AddProductPageState extends State<AddProductPage> {
   }
 }
 
-void sendProductToFireStore(
+Future<void> sendProductToFireStore(
     BuildContext context,
     TextEditingController modelController,
     TextEditingController descriptionController,
