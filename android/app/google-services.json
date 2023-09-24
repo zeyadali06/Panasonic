@@ -1,0 +1,82 @@
+{
+  "project_info": {
+    "project_number": "168899203640",
+    "project_id": "panasonic-15385",
+    "storage_bucket": "panasonic-15385.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:168899203640:android:043edb6e7d8587db2d8ccd",
+        "android_client_info": {
+          "package_name": "com.example.many_pages"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "168899203640-9hgi4p9b42om9av1d8q18u389iu41vp9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBy4Cjt04zIIcvNb6FKLfKTXJtqmCvkdkY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "168899203640-9hgi4p9b42om9av1d8q18u389iu41vp9.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "168899203640-iga43iv34ssk06uhii1t5m2lb4g06egi.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.manyPages"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:168899203640:android:5cd25388044cdbe12d8ccd",
+        "android_client_info": {
+          "package_name": "com.example.panasonic"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "168899203640-9hgi4p9b42om9av1d8q18u389iu41vp9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBy4Cjt04zIIcvNb6FKLfKTXJtqmCvkdkY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "168899203640-9hgi4p9b42om9av1d8q18u389iu41vp9.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "168899203640-iga43iv34ssk06uhii1t5m2lb4g06egi.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.manyPages"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
