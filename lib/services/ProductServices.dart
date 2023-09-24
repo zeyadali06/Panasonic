@@ -45,8 +45,8 @@ class ProductModel {
   }
 }
 
-void addProduct({required ProductModel product}) {
-  FirebaseFirestore.instance.collection(allProductsCollection).doc(product.model).set({
+Future<void> addProduct({required ProductModel product}) async {
+  await FirebaseFirestore.instance.collection(allProductsCollection).doc(product.model).set({
     'model': product.model.toUpperCase(),
     'description': product.description,
     'category': product.category,
@@ -60,9 +60,9 @@ void addProduct({required ProductModel product}) {
   });
 }
 
-void addProductToAccount({required ProductModel product, required String email}) {
+Future<void> addProductToAccount({required ProductModel product, required String email}) async {
   try {
-    FirebaseFirestore.instance.collection(usersCollection).doc(email).update({
+    await FirebaseFirestore.instance.collection(usersCollection).doc(email).update({
       '${product.model}${product.used ? 't' : 'f'}': {
         'model': product.model.toUpperCase(),
         'description': product.description,
@@ -77,7 +77,7 @@ void addProductToAccount({required ProductModel product, required String email})
       }
     });
   } catch (e) {
-    FirebaseFirestore.instance.collection(usersCollection).doc(email).set({
+    await FirebaseFirestore.instance.collection(usersCollection).doc(email).set({
       '${product.model}${product.used ? 't' : 'f'}': {
         'model': product.model.toUpperCase(),
         'description': product.description,

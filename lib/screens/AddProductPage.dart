@@ -160,7 +160,6 @@ class _AddProductPageState extends State<AddProductPage> {
             CustomButton(
               onTap: () {
                 FocusManager.instance.primaryFocus?.unfocus();
-                // await Future.delayed(const Duration(milliseconds: 100));
                 sendProductToFireStore(
                   context,
                   modelController,
@@ -208,7 +207,7 @@ void sendProductToFireStore(
     TextEditingController imageController,
     TextEditingController abbreviationController,
     TextEditingController noteController,
-    ScrollController scrollController) {
+    ScrollController scrollController) async {
   try {
     if (modelController.text.isEmpty) {
       showSnackBar(context, 'Device Model is empty');
@@ -230,8 +229,8 @@ void sendProductToFireStore(
       compatibility: Provider.of<ProviderVariables>(context, listen: false).compatibility,
       note: noteController.text,
     );
-    addProductToAccount(product: product, email: Provider.of<ProviderVariables>(context, listen: false).email!);
-    addProduct(
+    await addProductToAccount(product: product, email: Provider.of<ProviderVariables>(context, listen: false).email!);
+    await addProduct(
       product: ProductModel(
         model: modelController.text,
         description: descriptionController.text,
@@ -251,6 +250,8 @@ void sendProductToFireStore(
     } else {
       showSnackBar(context, 'Error, try again');
     }
+  } catch (e) {
+    showSnackBar(context, 'Error, try again');
   }
 }
 

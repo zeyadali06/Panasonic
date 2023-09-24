@@ -1,17 +1,17 @@
 // ignore_for_file: file_names
 import 'package:flutter/material.dart';
-import 'package:panasonic/screens/AddProductPage.dart';
 import 'package:panasonic/screens/MyAccountPage.dart';
 import 'package:panasonic/screens/MyProductsPage.dart';
+import 'package:panasonic/screens/SearchPage.dart';
 
-class NavBar extends StatefulWidget {
-  const NavBar({super.key});
+class HomeNavigationBar extends StatefulWidget {
+  const HomeNavigationBar({super.key});
 
   @override
-  State<NavBar> createState() => _NavBarState();
+  State<HomeNavigationBar> createState() => _HomeNavigationBarState();
 }
 
-class _NavBarState extends State<NavBar> {
+class _HomeNavigationBarState extends State<HomeNavigationBar> {
   int selectedIndex = 0;
   static List<Widget> pages = <Widget>[];
 
@@ -25,7 +25,7 @@ class _NavBarState extends State<NavBar> {
 
     pages = <Widget>[
       const MyProductsPage(),
-      const AddProductPage(),
+      const SearchPage(),
       MyAccountPage(
         refresh: _refresh,
       ),
@@ -50,7 +50,7 @@ class _NavBarState extends State<NavBar> {
         showUnselectedLabels: false,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: 'My Products'),
-          BottomNavigationBarItem(icon: Icon(Icons.add), label: 'Add'),
+          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
           BottomNavigationBarItem(icon: Icon(Icons.person_outlined), label: 'Account'),
         ],
         currentIndex: selectedIndex,

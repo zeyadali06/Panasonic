@@ -163,7 +163,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         try {
                           UserCredential user = await SignIn.signInWithGoogle();
                           Provider.of<ProviderVariables>(context, listen: false).email = user.user!.email;
-                          Navigator.pushReplacementNamed(context, 'NavBar');
+                          Navigator.pushReplacementNamed(context, 'HomeNavigationBar');
                         } catch (exc) {
                           showSnackBar(context, 'Error');
                         }
@@ -189,7 +189,7 @@ Future<void> registerNormally(BuildContext context, String username, String emai
   try {
     UserCredential user = await Register.register(username, email, password);
     Provider.of<ProviderVariables>(context, listen: false).email = user.user!.email;
-    Navigator.pushReplacementNamed(context, 'NavBar');
+    Navigator.pushReplacementNamed(context, 'HomeNavigationBar');
   } on FirebaseAuthException catch (exc) {
     if (exc.code == 'weak-password') {
       showSnackBar(context, 'Weak password');

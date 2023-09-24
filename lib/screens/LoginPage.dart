@@ -120,7 +120,7 @@ class _LoginPageState extends State<LoginPage> {
                         try {
                           UserCredential user = await SignIn.signInWithGoogle();
                           Provider.of<ProviderVariables>(context, listen: false).email = user.user!.email;
-                          Navigator.pushReplacementNamed(context, 'NavBar');
+                          Navigator.pushReplacementNamed(context, 'HomeNavigationBar');
                         } catch (exc) {
                           showSnackBar(context, 'Error');
                         }
@@ -146,7 +146,7 @@ Future<void> loginNormally(BuildContext context, String email, String password) 
   try {
     UserCredential user = await SignIn.signIn(email, password);
     Provider.of<ProviderVariables>(context, listen: false).email = user.user!.email;
-    Navigator.pushReplacementNamed(context, 'NavBar');
+    Navigator.pushReplacementNamed(context, 'HomeNavigationBar');
   } on FirebaseAuthException catch (exc) {
     if (exc.code == 'user-not-found') {
       showSnackBar(context, 'Email not found');

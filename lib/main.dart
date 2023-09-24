@@ -7,7 +7,6 @@ import 'package:panasonic/screens/AddProductPage.dart';
 import 'package:panasonic/screens/EditOrDeleteProductPage.dart';
 import 'package:panasonic/screens/SearchPage.dart';
 import 'package:panasonic/screens/SplachScreen.dart';
-import 'package:panasonic/screens/HomePage.dart';
 import 'package:panasonic/screens/LoginPage.dart';
 import 'package:panasonic/screens/MyProductsPage.dart';
 import 'package:panasonic/screens/RegisterPage.dart';
@@ -33,14 +32,13 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       routes: {
         'SplachScreen': (context) => const SplachScreen(),
-        'HomePage': (context) => const HomePage(),
         'RegisterPage': (context) => const RegisterPage(),
         'LoginPage': (context) => const LoginPage(),
         'MyProductsPage': (context) => const MyProductsPage(),
         'SearchPage': (context) => const SearchPage(),
         'AddProductPage': (context) => const AddProductPage(),
         'EditOrDeleteProductPage': (context) => const EditOrDeleteProductPage(),
-        'NavBar': (context) => const NavBar(),
+        'HomeNavigationBar': (context) => const HomeNavigationBar(),
       },
       home: const SplachScreen(),
     );

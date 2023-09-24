@@ -73,7 +73,7 @@ class _SearchPageState extends State<SearchPage> {
                               child: CustomButton(
                                 onTap: () {
                                   Provider.of<ProviderVariables>(context, listen: false).product = ProductModel.fromFireStoreDB(data);
-                                  Navigator.pushNamed(context, 'AddProduct');
+                                  Navigator.pushNamed(context, 'AddProductPage');
                                 },
                                 widget: Text(data['model'], style: const TextStyle(fontSize: 22)),
                                 color: Colors.white,
