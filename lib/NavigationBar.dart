@@ -1,5 +1,6 @@
 // ignore_for_file: file_names
 import 'package:flutter/material.dart';
+import 'package:panasonic/constants.dart';
 import 'package:panasonic/screens/MyAccountPage.dart';
 import 'package:panasonic/screens/MyProductsPage.dart';
 import 'package:panasonic/screens/SearchPage.dart';
@@ -19,6 +20,12 @@ class _HomeNavigationBarState extends State<HomeNavigationBar> {
     setState(() {});
   }
 
+  void _onItemTapped(int index) {
+    setState(() {
+      selectedIndex = index;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -30,12 +37,6 @@ class _HomeNavigationBarState extends State<HomeNavigationBar> {
         refresh: _refresh,
       ),
     ];
-  }
-
-  void _onItemTapped(int index) {
-    setState(() {
-      selectedIndex = index;
-    });
   }
 
   @override
@@ -54,7 +55,7 @@ class _HomeNavigationBarState extends State<HomeNavigationBar> {
           BottomNavigationBarItem(icon: Icon(Icons.person_outlined), label: 'Account'),
         ],
         currentIndex: selectedIndex,
-        // selectedItemColor: Global.dark ? FontColorDark : Purple,
+        selectedItemColor: KPrimayColor,
         onTap: _onItemTapped,
       ),
     );
