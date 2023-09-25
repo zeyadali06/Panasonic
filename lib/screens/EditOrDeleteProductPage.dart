@@ -165,7 +165,6 @@ class _EditOrDeleteProductPageState extends State<EditOrDeleteProductPage> {
                   '${providerProduct.model}${providerProduct.used ? 't' : 'f'}': FieldValue.delete(),
                 };
                 FirebaseFirestore.instance.collection(usersCollection).doc(Provider.of<ProviderVariables>(context, listen: false).email).update(updates);
-
                 showSnackBar(context, 'Product Deleted Successfully');
                 Provider.of<ProviderVariables>(context, listen: false).category = null;
                 Provider.of<ProviderVariables>(context, listen: false).used = null;
