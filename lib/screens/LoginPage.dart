@@ -165,8 +165,8 @@ Future<void> loginNormally(BuildContext context, String emailOrUsername, String 
     }
 
     if (email == null) {
-      var d = await FirebaseFirestore.instance.collection(usernameCollection).where('username', isEqualTo: username).limit(1).get();
-      email = await SignIn.getEmailFromFirebaseAuth(d.docs[0].id);
+      var uidDocument = await FirebaseFirestore.instance.collection(usernameCollection).where('username', isEqualTo: username).limit(1).get();
+      email = await SignIn.getEmailFromFirestore(uidDocument.docs[0].id);
       await SignIn.signIn(email!, password);
     } else if (username == null) {
       UserCredential user = await SignIn.signIn(email, password);
@@ -175,6 +175,7 @@ Future<void> loginNormally(BuildContext context, String emailOrUsername, String 
 
     Provider.of<ProviderVariables>(context, listen: false).email = email;
     Provider.of<ProviderVariables>(context, listen: false).username = username;
+
     Navigator.pushReplacementNamed(context, 'HomeNavigationBar');
   } on FirebaseAuthException catch (exc) {
     if (exc.code == 'user-not-found') {
@@ -189,6 +190,7 @@ Future<void> loginNormally(BuildContext context, String emailOrUsername, String 
       showSnackBar(context, 'Error');
     }
   } catch (exc) {
+    print(exc);
     showSnackBar(context, 'Error');
   }
 }

@@ -20,9 +20,18 @@ class SignIn {
     return await FirebaseAuth.instance.signInWithCredential(credential);
   }
 
+  static Future<UserCredential> signInWithUid(String uid) async {
+    return await FirebaseAuth.instance.signInWithCredential(EmailAuthProvider.credential(email: '', password: ''));
+  }
+
   static Future<String?> getUsernameFromFirestore(String uid) async {
     var d = await FirebaseFirestore.instance.collection(usernameCollection).doc(uid).get();
     return d.data()!['username'];
+  }
+
+  static Future<String?> getEmailFromFirestore(String uid) async {
+    var d = await FirebaseFirestore.instance.collection(usernameCollection).doc(uid).get();
+    return d.data()!['email'];
   }
 
   static Future<String?> getEmailFromFirebaseAuth(String uid) async {
@@ -34,7 +43,11 @@ class SignIn {
 class Register {
   static Future<UserCredential> register(String email, String username, String password) async {
     UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
-    await FirebaseFirestore.instance.collection(usernameCollection).doc(userCredential.user!.uid).set({'username': username}, SetOptions(merge: true));
+    await FirebaseFirestore.instance.collection(usernameCollection).doc(userCredential.user!.uid).set({'username': username, 'email': email}, SetOptions(merge: true));
     return userCredential;
   }
 }
+
+// zeyad06
+// zeyad@gmail.com
+// 06062003
