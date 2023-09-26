@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:panasonic/constants.dart';
 import 'package:panasonic/screens/LoginPage.dart';
-// import 'package:ecommerce_app/Global%20Variables/Global.dart';
-// import 'package:ecommerce_app/Screens/LoginPage.dart';
-// import 'package:ecommerce_app/constant/constant.dart';
-// import 'package:shared_preferences/shared_preferences.dart';
 
 class MyAccountPage extends StatefulWidget {
   final Function refresh;
