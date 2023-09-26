@@ -34,6 +34,11 @@ class SignIn {
     return d.data()!['email'];
   }
 
+  static Future<String?> getPhoneNumberFromFirestore(String uid) async {
+    var d = await FirebaseFirestore.instance.collection(usernameCollection).doc(uid).get();
+    return d.data()!['phone'];
+  }
+
   static Future<String?> getEmailFromFirebaseAuth(String uid) async {
     User? user = await FirebaseAuth.instance.userChanges().firstWhere((user) => user!.uid == uid);
     return user?.email;
@@ -41,9 +46,9 @@ class SignIn {
 }
 
 class Register {
-  static Future<UserCredential> register(String email, String username, String password) async {
+  static Future<UserCredential> register(String email, String username, String phone, String password) async {
     UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
-    await FirebaseFirestore.instance.collection(usernameCollection).doc(userCredential.user!.uid).set({'username': username, 'email': email}, SetOptions(merge: true));
+    await FirebaseFirestore.instance.collection(usernameCollection).doc(userCredential.user!.uid).set({'email': email, 'username': username, 'phone': phone}, SetOptions(merge: true));
     return userCredential;
   }
 }

@@ -22,12 +22,14 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPageState extends State<RegisterPage> {
   late String username;
   late String email;
+  late String phone;
   late String password;
   late String confirmPassword;
   bool isLoading = false;
 
   GlobalKey<FormState> usernameKey = GlobalKey();
   GlobalKey<FormState> emailKey = GlobalKey();
+  GlobalKey<FormState> phoneKey = GlobalKey();
   GlobalKey<FormState> passwordKey = GlobalKey();
   GlobalKey<FormState> confirmPasswordKey = GlobalKey();
 
@@ -96,6 +98,26 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                     const SizedBox(height: 10),
 
+                    // Phone
+                    Focus(
+                      onFocusChange: (value) {
+                        phoneKey.currentState!.validate();
+                      },
+                      child: Form(
+                        key: phoneKey,
+                        child: CustomTextFormField(
+                          prefixIcon: Icons.phone,
+                          label: 'Phone',
+                          hintText: 'Enter Your Phone Number',
+                          onChanged: (data) {
+                            phoneKey.currentState!.validate();
+                            phone = data.trim();
+                          },
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+
                     // Password
                     Focus(
                       onFocusChange: (value) {
@@ -144,7 +166,11 @@ class _RegisterPageState extends State<RegisterPage> {
                       borderColor: KPrimayColor,
                       widget: const Text('Register', style: TextStyle(fontSize: 23, color: Colors.white, fontWeight: FontWeight.bold)),
                       onTap: () async {
-                        if (usernameKey.currentState!.validate() && emailKey.currentState!.validate() && passwordKey.currentState!.validate() && confirmPasswordKey.currentState!.validate()) {
+                        if (usernameKey.currentState!.validate() &&
+                            emailKey.currentState!.validate() &&
+                            phoneKey.currentState!.validate() &&
+                            passwordKey.currentState!.validate() &&
+                            confirmPasswordKey.currentState!.validate()) {
                           if (password != confirmPassword) {
                             showSnackBar(context, "Password and it's confirmation doesn't same");
                             return;
@@ -152,7 +178,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           setState(() {
                             isLoading = true;
                           });
-                          await registerNormally(context, email, username, password);
+                          await registerNormally(context, email, username, phone, password);
                           setState(() {
                             isLoading = false;
                           });
@@ -206,7 +232,7 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 }
 
-Future<void> registerNormally(BuildContext context, String email, String username, String password) async {
+Future<void> registerNormally(BuildContext context, String email, String username, String phone, String password) async {
   try {
     var usernameChecker = await FirebaseFirestore.instance.collection(usernameCollection).where('username', isEqualTo: username).limit(1).get();
     if (usernameChecker.docs.isNotEmpty) {
@@ -214,7 +240,7 @@ Future<void> registerNormally(BuildContext context, String email, String usernam
       return;
     }
 
-    await Register.register(email, username, password);
+    await Register.register(email, username, phone, password);
     Provider.of<ProviderVariables>(context, listen: false).email = email;
     Provider.of<ProviderVariables>(context, listen: false).username = username;
     Navigator.pushReplacementNamed(context, 'HomeNavigationBar');
