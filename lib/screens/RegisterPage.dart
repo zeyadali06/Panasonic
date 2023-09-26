@@ -1,5 +1,6 @@
 // ignore_for_file: file_names
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -207,6 +208,12 @@ class _RegisterPageState extends State<RegisterPage> {
 
 Future<void> registerNormally(BuildContext context, String email, String username, String password) async {
   try {
+    var usernameChecker = await FirebaseFirestore.instance.collection(usernameCollection).where('username', isEqualTo: username).limit(1).get();
+    if (usernameChecker.docs.isNotEmpty) {
+      showSnackBar(context, 'Username Already Exist');
+      return;
+    }
+
     await Register.register(email, username, password);
     Provider.of<ProviderVariables>(context, listen: false).email = email;
     Provider.of<ProviderVariables>(context, listen: false).username = username;
@@ -227,3 +234,8 @@ Future<void> registerNormally(BuildContext context, String email, String usernam
     showSnackBar(context, 'Error');
   }
 }
+
+
+// zeyad06
+// zeyad@gmail.com
+// 06062003
