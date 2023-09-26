@@ -1,4 +1,5 @@
 // ignore_for_file: file_names
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
@@ -17,7 +18,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  String? email;
+  String? emailOrUsername;
   String? password;
   bool isLoading = false;
   GlobalKey<FormState> deviceKey = GlobalKey();
@@ -47,33 +48,43 @@ class _LoginPageState extends State<LoginPage> {
                     const Row(children: [Center(child: Text('Log In', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: KPrimayColor)))]),
                     const SizedBox(height: 25),
 
-                    // Email
-                    Form(
-                      key: deviceKey,
-                      child: CustomTextFormField(
-                        prefixIcon: Icons.email,
-                        label: 'Email',
-                        hintText: 'Enter Your Email',
-                        onChanged: (data) {
-                          deviceKey.currentState!.validate();
-                          email = data;
-                        },
+                    // Email Or Username
+                    Focus(
+                      onFocusChange: (value) {
+                        deviceKey.currentState!.validate();
+                      },
+                      child: Form(
+                        key: deviceKey,
+                        child: CustomTextFormField(
+                          prefixIcon: Icons.email,
+                          label: 'Email or Username',
+                          hintText: 'Enter Your Email or Username',
+                          onChanged: (data) {
+                            deviceKey.currentState!.validate();
+                            emailOrUsername = data;
+                          },
+                        ),
                       ),
                     ),
                     const SizedBox(height: 10),
 
                     // Password
-                    Form(
-                      key: descriptionKey,
-                      child: CustomTextFormField(
-                        prefixIcon: Icons.lock_outlined,
-                        label: 'Password',
-                        hintText: 'Enter Your Password',
-                        obscureText: true,
-                        onChanged: (data) {
-                          descriptionKey.currentState!.validate();
-                          password = data;
-                        },
+                    Focus(
+                      onFocusChange: (value) {
+                        descriptionKey.currentState!.validate();
+                      },
+                      child: Form(
+                        key: descriptionKey,
+                        child: CustomTextFormField(
+                          prefixIcon: Icons.lock_outlined,
+                          label: 'Password',
+                          hintText: 'Enter Your Password',
+                          obscureText: true,
+                          onChanged: (data) {
+                            descriptionKey.currentState!.validate();
+                            password = data;
+                          },
+                        ),
                       ),
                     ),
                     const SizedBox(height: 30),
@@ -88,7 +99,7 @@ class _LoginPageState extends State<LoginPage> {
                           setState(() {
                             isLoading = true;
                           });
-                          await loginNormally(context, email!, password!);
+                          await loginNormally(context, emailOrUsername!, password!);
                           setState(() {
                             isLoading = false;
                           });
@@ -142,10 +153,28 @@ class _LoginPageState extends State<LoginPage> {
   }
 }
 
-Future<void> loginNormally(BuildContext context, String email, String password) async {
+Future<void> loginNormally(BuildContext context, String emailOrUsername, String password) async {
   try {
-    UserCredential user = await SignIn.signIn(email, password);
-    Provider.of<ProviderVariables>(context, listen: false).email = user.user!.email;
+    String? email;
+    String? username;
+
+    if (emailOrUsername.contains('@')) {
+      email = emailOrUsername;
+    } else {
+      username = emailOrUsername;
+    }
+
+    if (email == null) {
+      var d = await FirebaseFirestore.instance.collection(usernameCollection).where('username', isEqualTo: username).limit(1).get();
+      email = await SignIn.getEmailFromFirebaseAuth(d.docs[0].id);
+      await SignIn.signIn(email!, password);
+    } else if (username == null) {
+      UserCredential user = await SignIn.signIn(email, password);
+      username = await SignIn.getUsernameFromFirestore(user.user!.uid);
+    }
+
+    Provider.of<ProviderVariables>(context, listen: false).email = email;
+    Provider.of<ProviderVariables>(context, listen: false).username = username;
     Navigator.pushReplacementNamed(context, 'HomeNavigationBar');
   } on FirebaseAuthException catch (exc) {
     if (exc.code == 'user-not-found') {
@@ -163,3 +192,7 @@ Future<void> loginNormally(BuildContext context, String email, String password) 
     showSnackBar(context, 'Error');
   }
 }
+
+// zeyad@gmail.com
+
+// 06062003

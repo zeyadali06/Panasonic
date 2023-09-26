@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 
-// ignore: constant_identifier_names
 const KPrimayColor = Color(0xff0041c0);
 const String usersCollection = 'UsersAndTheirDevices';
 const String allProductsCollection = 'AllProducts';
-const String ocs = 'Office Communication Systems';
+const String usernameCollection = 'UsernameCollection';
 const Set<String> allCategories = {
   'Air Conditioning',
   'Automation Control Components',
@@ -43,7 +42,6 @@ const Set<String> allCategories = {
   'Ventilating Fan',
   'Visual Sort Assist',
 };
-
 const Set<String> allCompatibleDevices = {
   'KX-TEA308',
   'KX-TES824',
@@ -63,7 +61,6 @@ const Set<String> allCompatibleDevices = {
   'KX-NS500',
   'KX-NS1000',
 };
-
 double widthOfCustoms(BuildContext context) => MediaQuery.of(context).size.width - KPadding * 2;
 const double KPadding = 15;
 BorderRadius KRadius = BorderRadius.circular(10);

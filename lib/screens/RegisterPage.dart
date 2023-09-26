@@ -55,64 +55,84 @@ class _RegisterPageState extends State<RegisterPage> {
                     const SizedBox(height: 25),
 
                     // Username
-                    Form(
-                      key: usernameKey,
-                      child: CustomTextFormField(
-                        prefixIcon: Icons.person,
-                        label: 'Username',
-                        hintText: 'Enter Your Username',
-                        inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z0-9]"))],
-                        onChanged: (data) {
-                          usernameKey.currentState!.validate();
-                          username = data.trim();
-                        },
+                    Focus(
+                      onFocusChange: (value) {
+                        usernameKey.currentState!.validate();
+                      },
+                      child: Form(
+                        key: usernameKey,
+                        child: CustomTextFormField(
+                          prefixIcon: Icons.person,
+                          label: 'Username',
+                          hintText: 'Enter Your Username',
+                          inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z0-9]"))],
+                          onChanged: (data) {
+                            usernameKey.currentState!.validate();
+                            username = data.trim();
+                          },
+                        ),
                       ),
                     ),
                     const SizedBox(height: 10),
 
                     // Email
-                    Form(
-                      key: emailKey,
-                      child: CustomTextFormField(
-                        prefixIcon: Icons.email,
-                        label: 'Email',
-                        hintText: 'Enter Your Email',
-                        onChanged: (data) {
-                          emailKey.currentState!.validate();
-                          email = data.trim();
-                        },
+                    Focus(
+                      onFocusChange: (value) {
+                        emailKey.currentState!.validate();
+                      },
+                      child: Form(
+                        key: emailKey,
+                        child: CustomTextFormField(
+                          prefixIcon: Icons.email,
+                          label: 'Email',
+                          hintText: 'Enter Your Email',
+                          onChanged: (data) {
+                            emailKey.currentState!.validate();
+                            email = data.trim();
+                          },
+                        ),
                       ),
                     ),
                     const SizedBox(height: 10),
 
                     // Password
-                    Form(
-                      key: passwordKey,
-                      child: CustomTextFormField(
-                        prefixIcon: Icons.lock_outlined,
-                        label: 'Password',
-                        hintText: 'Enter Your Password',
-                        obscureText: true,
-                        onChanged: (data) {
-                          passwordKey.currentState!.validate();
-                          password = data.trim();
-                        },
+                    Focus(
+                      onFocusChange: (value) {
+                        passwordKey.currentState!.validate();
+                      },
+                      child: Form(
+                        key: passwordKey,
+                        child: CustomTextFormField(
+                          prefixIcon: Icons.lock_outlined,
+                          label: 'Password',
+                          hintText: 'Enter Your Password',
+                          obscureText: true,
+                          onChanged: (data) {
+                            passwordKey.currentState!.validate();
+                            password = data.trim();
+                          },
+                        ),
                       ),
                     ),
                     const SizedBox(height: 10),
 
                     // Confirm Password
-                    Form(
-                      key: confirmPasswordKey,
-                      child: CustomTextFormField(
-                        prefixIcon: Icons.lock_outlined,
-                        label: 'Confirm Password',
-                        hintText: 'Confirm Your Password',
-                        obscureText: true,
-                        onChanged: (data) {
-                          confirmPasswordKey.currentState!.validate();
-                          confirmPassword = data.trim();
-                        },
+                    Focus(
+                      onFocusChange: (value) {
+                        confirmPasswordKey.currentState!.validate();
+                      },
+                      child: Form(
+                        key: confirmPasswordKey,
+                        child: CustomTextFormField(
+                          prefixIcon: Icons.lock_outlined,
+                          label: 'Confirm Password',
+                          hintText: 'Confirm Your Password',
+                          obscureText: true,
+                          onChanged: (data) {
+                            confirmPasswordKey.currentState!.validate();
+                            confirmPassword = data.trim();
+                          },
+                        ),
                       ),
                     ),
                     const SizedBox(height: 30),
@@ -131,7 +151,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           setState(() {
                             isLoading = true;
                           });
-                          await registerNormally(context, username, email, password);
+                          await registerNormally(context, email, username, password);
                           setState(() {
                             isLoading = false;
                           });
@@ -185,10 +205,11 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 }
 
-Future<void> registerNormally(BuildContext context, String username, String email, String password) async {
+Future<void> registerNormally(BuildContext context, String email, String username, String password) async {
   try {
-    UserCredential user = await Register.register(username, email, password);
-    Provider.of<ProviderVariables>(context, listen: false).email = user.user!.email;
+    await Register.register(email, username, password);
+    Provider.of<ProviderVariables>(context, listen: false).email = email;
+    Provider.of<ProviderVariables>(context, listen: false).username = username;
     Navigator.pushReplacementNamed(context, 'HomeNavigationBar');
   } on FirebaseAuthException catch (exc) {
     if (exc.code == 'weak-password') {

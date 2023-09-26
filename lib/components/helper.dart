@@ -199,6 +199,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
           }
           return null;
         },
+        cursorOpacityAnimates: true,
         cursorColor: color,
         obscureText: show!,
         onChanged: widget.onChanged,

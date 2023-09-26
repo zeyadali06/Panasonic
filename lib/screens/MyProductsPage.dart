@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:panasonic/constants.dart';
 import 'package:panasonic/main.dart';
-import 'package:panasonic/services/ProductServices.dart';
+import 'package:panasonic/models/ProductModel.dart';
 import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable

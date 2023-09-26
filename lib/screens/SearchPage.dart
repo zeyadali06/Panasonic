@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:panasonic/components/helper.dart';
 import 'package:panasonic/constants.dart';
 import 'package:panasonic/main.dart';
-import 'package:panasonic/services/ProductServices.dart';
+import 'package:panasonic/models/ProductModel.dart';
 import 'package:provider/provider.dart';
 
 class SearchPage extends StatefulWidget {

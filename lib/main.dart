@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:panasonic/NavigationBar.dart';
 import 'package:panasonic/firebase_options.dart';
+import 'package:panasonic/models/ProductModel.dart';
 import 'package:panasonic/screens/AddProductPage.dart';
 import 'package:panasonic/screens/EditOrDeleteProductPage.dart';
 import 'package:panasonic/screens/SearchPage.dart';
@@ -10,7 +11,6 @@ import 'package:panasonic/screens/SplachScreen.dart';
 import 'package:panasonic/screens/LoginPage.dart';
 import 'package:panasonic/screens/MyProductsPage.dart';
 import 'package:panasonic/screens/RegisterPage.dart';
-import 'package:panasonic/services/ProductServices.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
@@ -47,6 +47,7 @@ class MyApp extends StatelessWidget {
 
 class ProviderVariables extends ChangeNotifier {
   String? email;
+  String? username;
 
   ProductModel? product;
   bool? used;
