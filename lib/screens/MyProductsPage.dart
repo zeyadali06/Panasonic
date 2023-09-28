@@ -1,9 +1,11 @@
 // ignore_for_file: file_names
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:panasonic/components/helper.dart';
 import 'package:panasonic/constants.dart';
 import 'package:panasonic/main.dart';
 import 'package:panasonic/models/ProductModel.dart';
+import 'package:panasonic/services/ProductServices.dart';
 import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable
@@ -48,15 +50,48 @@ class _MyProductsPageState extends State<MyProductsPage> {
               return ListView(
                 children: myProducts.map((e) {
                   return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: KPadding, vertical: 8),
-                    child: ListTile(
-                      onTap: () {
-                        Provider.of<ProviderVariables>(context, listen: false).product = e.values.single;
-                        Navigator.pushNamed(context, 'EditOrDeleteProductPage');
-                      },
-                      title: Text(e.values.single.model, style: const TextStyle(fontSize: 22)),
-                      trailing: Text(e.keys.single ? 'used' : ''),
-                      shape: RoundedRectangleBorder(side: const BorderSide(width: 2, color: KPrimayColor), borderRadius: KRadius),
+                    padding: const EdgeInsets.symmetric(horizontal: KHorizontalPadding, vertical: 8),
+                    child: Stack(
+                      alignment: AlignmentDirectional.center,
+                      children: [
+                        Card(
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(borderRadius: KRadius),
+                          child: ListTile(
+                            title: const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text("Delete Product ", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0, color: Colors.white)),
+                                Icon(Icons.delete, color: Colors.white),
+                              ],
+                            ),
+                            tileColor: Colors.red,
+                            shape: RoundedRectangleBorder(borderRadius: KRadius),
+                          ),
+                        ),
+                        Dismissible(
+                          key: UniqueKey(),
+                          direction: DismissDirection.endToStart,
+                          onDismissed: (direction) async {
+                            await deleteProduct(e.values.single, context);
+                            showSnackBar(context, 'Product Deleted Successfully');
+                            setState(() {});
+                          },
+                          child: Card(
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(side: const BorderSide(width: 2, color: KPrimayColor), borderRadius: KRadius),
+                            child: ListTile(
+                              onTap: () {
+                                Provider.of<ProviderVariables>(context, listen: false).product = e.values.single;
+                                Navigator.pushNamed(context, 'EditOrDeleteProductPage');
+                              },
+                              leading: Text(e.values.single.model, style: const TextStyle(fontSize: 22)),
+                              title: e.values.single.price == null ? null : Center(child: Text("${e.values.single.price}£E", style: const TextStyle(fontSize: 22))),
+                              trailing: Text(e.keys.single ? 'used' : ''),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   );
                 }).toList(),

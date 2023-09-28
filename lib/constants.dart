@@ -61,7 +61,7 @@ const Set<String> allCompatibleDevices = {
   'KX-NS500',
   'KX-NS1000',
 };
-double widthOfCustoms(BuildContext context) => MediaQuery.of(context).size.width - KPadding * 2;
-const double KPadding = 15;
+double widthOfCustoms(BuildContext context) => MediaQuery.of(context).size.width - KHorizontalPadding * 2;
+const double KHorizontalPadding = 15;
 BorderRadius KRadius = BorderRadius.circular(10);
 const double heightOfCustoms = 55;

@@ -1,7 +1,7 @@
 // ignore_for_file: file_names
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:number_editing_controller/number_editing_controller.dart';
 import 'package:panasonic/components/helper.dart';
 import 'package:panasonic/constants.dart';
@@ -19,13 +19,19 @@ class EditOrDeleteProductPage extends StatefulWidget {
 
 class _EditOrDeleteProductPageState extends State<EditOrDeleteProductPage> {
   @override
+  void deactivate() {
+    nullingProviderVars(context);
+    super.deactivate();
+  }
+
+  @override
   Widget build(BuildContext context) {
     ProductModel providerProduct = Provider.of<ProviderVariables>(context, listen: false).product!;
 
     final TextEditingController modelController = TextEditingController();
     final TextEditingController descriptionController = TextEditingController();
-    final NumberEditingTextController priceController = NumberEditingTextController.currency(allowNegative: false);
-    final NumberEditingTextController quantityController = NumberEditingTextController.integer();
+    final NumberEditingTextController priceController = NumberEditingTextController.currency(allowNegative: false, currencyName: 'EGP', groupSeparator: '', decimalSeparator: '.');
+    final NumberEditingTextController quantityController = NumberEditingTextController.integer(allowNegative: false);
     final TextEditingController imageController = TextEditingController();
     final TextEditingController abbreviationController = TextEditingController();
     final TextEditingController noteController = TextEditingController();
@@ -45,7 +51,7 @@ class _EditOrDeleteProductPageState extends State<EditOrDeleteProductPage> {
       child: Scaffold(
         appBar: AppBar(backgroundColor: KPrimayColor),
         body: ListView(
-          padding: const EdgeInsets.all(KPadding),
+          padding: const EdgeInsets.all(KHorizontalPadding),
           children: [
             // Device Model
             const LabelWithRedStar(label: 'Device Model'),
@@ -96,6 +102,7 @@ class _EditOrDeleteProductPageState extends State<EditOrDeleteProductPage> {
                   priceController.number = double.parse(data);
                 } catch (e) {}
               },
+              inputFormatters: [LengthLimitingTextInputFormatter(15)],
               hintText: 'Enter Price',
               controller: priceController,
             ),
@@ -111,6 +118,7 @@ class _EditOrDeleteProductPageState extends State<EditOrDeleteProductPage> {
                 } catch (e) {}
               },
               hintText: 'Enter Quantity',
+              inputFormatters: [LengthLimitingTextInputFormatter(15)],
               controller: quantityController,
             ),
             const SizedBox(height: 20),
@@ -122,7 +130,11 @@ class _EditOrDeleteProductPageState extends State<EditOrDeleteProductPage> {
               onFieldSubmitted: (data) {
                 abbreviationController.text = data.trim().toUpperCase();
               },
-              validateUpperCaseLetters: true,
+              inputFormatters: [
+                UpperCaseTextFormatter(),
+                FilteringTextInputFormatter.deny(RegExp(' ')),
+                LengthLimitingTextInputFormatter(15),
+              ],
               hintText: 'Enter Device Abbreviation',
               controller: abbreviationController,
             ),
@@ -151,7 +163,16 @@ class _EditOrDeleteProductPageState extends State<EditOrDeleteProductPage> {
             CustomButton(
               onTap: () {
                 FocusManager.instance.primaryFocus?.unfocus();
-                sendEditedProductToFireStore(context, modelController, descriptionController, priceController, quantityController, imageController, abbreviationController, noteController);
+                sendEditedProductToFireStore(
+                  context,
+                  modelController,
+                  descriptionController,
+                  priceController,
+                  quantityController,
+                  imageController,
+                  abbreviationController,
+                  noteController,
+                );
               },
               widget: textOfCustomButton(text: 'Save Changes'),
               color: KPrimayColor,
@@ -161,15 +182,10 @@ class _EditOrDeleteProductPageState extends State<EditOrDeleteProductPage> {
 
             // Delete Product
             CustomButton(
-              onTap: () {
-                final updates = <String, dynamic>{
-                  '${providerProduct.model}${providerProduct.used ? 't' : 'f'}': FieldValue.delete(),
-                };
-                FirebaseFirestore.instance.collection(usersCollection).doc(Provider.of<ProviderVariables>(context, listen: false).email).update(updates);
+              onTap: () async {
+                await deleteProduct(providerProduct, context);
                 showSnackBar(context, 'Product Deleted Successfully');
-                Provider.of<ProviderVariables>(context, listen: false).category = null;
-                Provider.of<ProviderVariables>(context, listen: false).used = null;
-                Provider.of<ProviderVariables>(context, listen: false).product = null;
+                nullingProviderVars(context);
                 Navigator.pop(context);
               },
               widget: textOfCustomButton(text: 'Delete Product'),
@@ -183,7 +199,16 @@ class _EditOrDeleteProductPageState extends State<EditOrDeleteProductPage> {
   }
 }
 
-void sendEditedProductToFireStore(context, modelController, descriptionController, priceController, quantityController, imageController, abbreviationController, noteController) {
+void sendEditedProductToFireStore(
+  BuildContext context,
+  TextEditingController modelController,
+  TextEditingController descriptionController,
+  NumberEditingTextController priceController,
+  NumberEditingTextController quantityController,
+  TextEditingController imageController,
+  TextEditingController abbreviationController,
+  TextEditingController noteController,
+) async {
   try {
     ProductModel? product = ProductModel(
       model: modelController.text,
@@ -197,11 +222,9 @@ void sendEditedProductToFireStore(context, modelController, descriptionControlle
       compatibility: Provider.of<ProviderVariables>(context, listen: false).compatibility,
       note: noteController.text,
     );
-    addProductToAccount(product: product, email: Provider.of<ProviderVariables>(context, listen: false).email!);
+    await addProductToAccount(product: product, email: Provider.of<ProviderVariables>(context, listen: false).email!);
     showSnackBar(context, 'Product Added Successfully');
-    Provider.of<ProviderVariables>(context, listen: false).category = null;
-    Provider.of<ProviderVariables>(context, listen: false).used = null;
-    Provider.of<ProviderVariables>(context, listen: false).product = null;
+    nullingProviderVars(context);
     Navigator.pop(context);
   } catch (e) {
     showSnackBar(context, 'Error, try again');
@@ -242,7 +265,7 @@ class _ChooseAndShowCompatibleDevicesState extends State<ChooseAndShowCompatible
           height: 200,
           decoration: BoxDecoration(borderRadius: KRadius, border: Border.all(color: Colors.grey)),
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: KPadding),
+            padding: const EdgeInsets.symmetric(horizontal: KHorizontalPadding),
             child: Column(
               children: Provider.of<ProviderVariables>(context, listen: false).compatibility != null
                   ? Provider.of<ProviderVariables>(context, listen: false).compatibility!.map((e) {

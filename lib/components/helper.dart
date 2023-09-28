@@ -14,26 +14,22 @@ class TFFForAddProduct extends StatefulWidget {
     this.onFieldSubmitted,
     this.onChanged,
     this.validate = false,
-    this.validateInt = false,
-    this.validateDouble = false,
-    this.validateUpperCaseLetters = false,
     this.multiLine = false,
     this.enabled = true,
     this.prefixText,
+    this.inputFormatters,
   });
 
   final String hintText;
   final String? prefixText;
   final void Function(String data)? onChanged;
   final void Function(String data)? onFieldSubmitted;
+  final List<TextInputFormatter>? inputFormatters;
   final bool multiLine;
-  final bool validate;
-  final bool validateDouble;
-  final bool validateInt;
-  final bool validateUpperCaseLetters;
   final TextEditingController? controller;
   final NumberEditingTextController? numberController;
   final bool enabled;
+  final bool validate;
 
   @override
   State<TFFForAddProduct> createState() => _TFFForAddProductState();
@@ -48,50 +44,34 @@ class _TFFForAddProductState extends State<TFFForAddProduct> {
 
   @override
   Widget build(BuildContext context) {
-    int sum = 0;
-    widget.validateDouble ? sum++ : null;
-    widget.validateInt ? sum++ : null;
-    widget.validateUpperCaseLetters ? sum++ : null;
-    sum > 1 ? throw Exception('One of them should be true ') : null;
-
     return Focus(
       onFocusChange: (foucsed) {
         foucs = foucsed;
         if (foucsed && color != errorColor) {
-          setState(() {
-            color = noErrorFoucsColor;
-          });
+          color = noErrorFoucsColor;
         } else if (foucsed == false && color != errorColor) {
-          setState(() {
-            color = noErrornoFoucsColor;
-          });
+          color = noErrornoFoucsColor;
         }
+        setState(() {});
       },
       child: TextFormField(
         validator: (data) {
-          if ((data!.isEmpty || data == '') && widget.validate) {
-            setState(() {
-              color = errorColor;
-            });
-            return 'Field is required';
-          } else if (foucs == true) {
-            setState(() {
+          if (widget.validate) {
+            if (data!.isEmpty) {
+              setState(() {
+                color = errorColor;
+              });
+              return 'Field is required';
+            } else if (foucs == true) {
               color = noErrorFoucsColor;
-            });
-          } else {
-            setState(() {
+            } else {
               color = noErrornoFoucsColor;
-            });
+            }
+            setState(() {});
           }
           return null;
         },
-        inputFormatters: widget.validateInt
-            ? <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly, FilteringTextInputFormatter.deny(RegExp(' '))]
-            : widget.validateDouble
-                ? <TextInputFormatter>[FilteringTextInputFormatter.allow(RegExp(r"[0-9]*\.?[0-9]*")), FilteringTextInputFormatter.deny(RegExp(' '))]
-                : widget.validateUpperCaseLetters
-                    ? [UpperCaseTextFormatter(), FilteringTextInputFormatter.deny(RegExp(' '))]
-                    : null,
+        inputFormatters: widget.inputFormatters,
         keyboardType: widget.multiLine ? TextInputType.multiline : null,
         enabled: widget.enabled,
         maxLines: widget.multiLine ? null : 1,
@@ -384,4 +364,11 @@ void showSnackBar(BuildContext context, String message) {
 
 Text textOfCustomButton({required text}) {
   return Text(text, style: const TextStyle(color: Colors.white, fontSize: 20));
+}
+
+void nullingProviderVars(BuildContext context) {
+  Provider.of<ProviderVariables>(context, listen: false).product = null;
+  Provider.of<ProviderVariables>(context, listen: false).compatibility = null;
+  Provider.of<ProviderVariables>(context, listen: false).category = null;
+  Provider.of<ProviderVariables>(context, listen: false).used = null;
 }
