@@ -54,6 +54,7 @@ class _AddProductPageState extends State<AddProductPage> {
         appBar: AppBar(backgroundColor: KPrimayColor),
         body: Form(
           child: ListView(
+            physics: const BouncingScrollPhysics(),
             controller: scrollController,
             padding: const EdgeInsets.all(KHorizontalPadding),
             children: [

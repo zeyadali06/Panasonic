@@ -51,6 +51,7 @@ class _EditOrDeleteProductPageState extends State<EditOrDeleteProductPage> {
       child: Scaffold(
         appBar: AppBar(backgroundColor: KPrimayColor),
         body: ListView(
+          physics: const BouncingScrollPhysics(),
           padding: const EdgeInsets.all(KHorizontalPadding),
           children: [
             // Device Model

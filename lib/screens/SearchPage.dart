@@ -63,29 +63,31 @@ class _SearchPageState extends State<SearchPage> {
                   if (snapshot.hasData) {
                     try {
                       return ListView(
-                          children: snapshot.data!.docs.map((DocumentSnapshot document) {
-                        if (document.id.contains(deviceName)) {
-                          Map<String, dynamic> data = document.data() as Map<String, dynamic>;
-                          return Column(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: KHorizontalPadding, vertical: 8),
-                                child: CustomButton(
-                                  onTap: () {
-                                    Provider.of<ProviderVariables>(context, listen: false).product = ProductModel.fromFireStoreDB(data);
-                                    Navigator.pushNamed(context, 'AddProductPage');
-                                  },
-                                  widget: Text(data['model'], style: const TextStyle(fontSize: 22)),
-                                  color: Colors.white,
-                                  borderColor: KPrimayColor,
+                        physics: const BouncingScrollPhysics(),
+                        children: snapshot.data!.docs.map((DocumentSnapshot document) {
+                          if (document.id.contains(deviceName)) {
+                            Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+                            return Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: KHorizontalPadding, vertical: 8),
+                                  child: CustomButton(
+                                    onTap: () {
+                                      Provider.of<ProviderVariables>(context, listen: false).product = ProductModel.fromFireStoreDB(data);
+                                      Navigator.pushNamed(context, 'AddProductPage');
+                                    },
+                                    widget: Text(data['model'], style: const TextStyle(fontSize: 22)),
+                                    color: Colors.white,
+                                    borderColor: KPrimayColor,
+                                  ),
                                 ),
-                              ),
-                            ],
-                          );
-                        } else {
-                          return const Column();
-                        }
-                      }).toList());
+                              ],
+                            );
+                          } else {
+                            return const Column();
+                          }
+                        }).toList(),
+                      );
                     } catch (e) {
                       return const Center(child: CircularProgressIndicator());
                     }

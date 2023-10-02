@@ -36,7 +36,8 @@ class _LoginPageState extends State<LoginPage> {
               // Animation
               const SizedBox(height: 20),
               Lottie.asset('assets/animated_images/animation_llz60pig.json'),
-              SingleChildScrollView(
+
+              Padding(
                 padding: const EdgeInsets.all(KHorizontalPadding),
                 child: Column(
                   children: [

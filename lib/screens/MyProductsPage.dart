@@ -48,6 +48,7 @@ class _MyProductsPageState extends State<MyProductsPage> {
             }
             try {
               return ListView(
+                physics:const BouncingScrollPhysics(),
                 children: myProducts.map((e) {
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: KHorizontalPadding, vertical: 8),
