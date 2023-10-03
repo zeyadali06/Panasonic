@@ -39,4 +39,9 @@ class ProductModel {
       note: data['note'],
     );
   }
+
+  @override
+  String toString() {
+    return "Model: $model\nDescription: $description\nCategory: $category\nUsed: $used\nPrice: $price\nQuantity: $quantity\nImage: $image\nAbbreviation: $abbreviation\nCompatibility: $compatibility\nNote: $note";
+  }
 }

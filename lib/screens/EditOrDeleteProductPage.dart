@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:number_editing_controller/number_editing_controller.dart';
 import 'package:panasonic/components/helper.dart';
 import 'package:panasonic/constants.dart';
@@ -20,278 +21,190 @@ class EditOrDeleteProductPage extends StatefulWidget {
 class _EditOrDeleteProductPageState extends State<EditOrDeleteProductPage> {
   @override
   void deactivate() {
-    nullingProviderVars(context);
+    nullingProductDetails(context);
     super.deactivate();
   }
 
+  bool isLoading = false;
+
   @override
   Widget build(BuildContext context) {
-    ProductModel providerProduct = Provider.of<ProviderVariables>(context, listen: false).product!;
-
-    final TextEditingController modelController = TextEditingController();
-    final TextEditingController descriptionController = TextEditingController();
-    final NumberEditingTextController priceController = NumberEditingTextController.currency(allowNegative: false, currencyName: 'EGP', groupSeparator: '', decimalSeparator: '.');
-    final NumberEditingTextController quantityController = NumberEditingTextController.integer(allowNegative: false);
-    final TextEditingController imageController = TextEditingController();
-    final TextEditingController abbreviationController = TextEditingController();
-    final TextEditingController noteController = TextEditingController();
-
-    modelController.text = providerProduct.model;
-    descriptionController.text = providerProduct.description;
-    Provider.of<ProviderVariables>(context, listen: false).category = providerProduct.category;
-    Provider.of<ProviderVariables>(context, listen: false).used = providerProduct.used;
-    providerProduct.price == null ? null : priceController.number = providerProduct.price;
-    providerProduct.quantity == null ? null : quantityController.number = providerProduct.quantity;
-    providerProduct.abbreviation == null ? null : abbreviationController.text = providerProduct.abbreviation!;
-    Provider.of<ProviderVariables>(context, listen: false).compatibility == null ? <Set>{} : Provider.of<ProviderVariables>(context, listen: false).compatibility = providerProduct.compatibility;
-    providerProduct.note == null ? null : noteController.text = providerProduct.note!;
+    ProductModel product = Provider.of<ProviderVariables>(context, listen: false).product!;
 
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-      child: Scaffold(
-        appBar: AppBar(backgroundColor: KPrimayColor),
-        body: ListView(
-          physics: const BouncingScrollPhysics(),
-          padding: const EdgeInsets.all(KHorizontalPadding),
-          children: [
-            // Device Model
-            const LabelWithRedStar(label: 'Device Model'),
-            const SizedBox(height: 5),
-            TFFForAddProduct(
-              hintText: '',
-              controller: modelController,
-              enabled: false,
-            ),
-            const SizedBox(height: 20),
+      child: ModalProgressHUD(
+        inAsyncCall: isLoading,
+        child: Scaffold(
+          appBar: AppBar(backgroundColor: KPrimayColor),
+          body: ListView(
+            physics: const BouncingScrollPhysics(),
+            padding: const EdgeInsets.all(KHorizontalPadding),
+            children: [
+              // Device Model
+              const LabelWithRedStar(label: 'Device Model'),
+              const SizedBox(height: 5),
+              TFFForAddProduct(
+                hintText: product.model,
+                enabled: false,
+              ),
+              const SizedBox(height: 20),
 
-            // Description
-            const LabelWithRedStar(label: 'Description'),
-            const SizedBox(height: 5),
-            TFFForAddProduct(
-              hintText: '',
-              controller: descriptionController,
-              enabled: false,
-            ),
-            const SizedBox(height: 20),
+              // Description
+              const LabelWithRedStar(label: 'Description'),
+              const SizedBox(height: 5),
+              TFFForAddProduct(
+                hintText: product.description,
+                enabled: false,
+              ),
+              const SizedBox(height: 20),
 
-            // Category
-            const LabelWithRedStar(label: 'Category Of Device'),
-            const SizedBox(height: 5),
-            CustomDropdownButton(
-              enabled: false,
-              initialText: Provider.of<ProviderVariables>(context, listen: false).category,
-              thingsToDisplay: [Provider.of<ProviderVariables>(context, listen: false).category.toString()],
-              onSelected: (value) {},
-            ),
-            const SizedBox(height: 20),
+              // Category
+              const LabelWithRedStar(label: 'Category Of Device'),
+              const SizedBox(height: 5),
+              CustomDropdownButton(
+                enabled: false,
+                initialText: product.category,
+                thingsToDisplay: [product.category],
+                onSelected: (value) {},
+              ),
+              const SizedBox(height: 20),
 
-            // Used
-            Row(
-              children: [
-                const LabelWithRedStar(label: 'Used'),
-                Checkbox(value: Provider.of<ProviderVariables>(context, listen: false).used, onChanged: (value) {}),
-              ],
-            ),
-            const SizedBox(height: 20),
+              // Used
+              Row(
+                children: [
+                  const LabelWithRedStar(label: 'Used'),
+                  Checkbox(value: product.used, onChanged: (value) {}),
+                ],
+              ),
+              const SizedBox(height: 20),
 
-            // Price
-            const Text('Price', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 5),
-            TFFForAddProduct(
-              onFieldSubmitted: (data) {
-                try {
-                  priceController.number = double.parse(data);
-                } catch (e) {}
-              },
-              inputFormatters: [LengthLimitingTextInputFormatter(15)],
-              hintText: 'Enter Price',
-              controller: priceController,
-            ),
-            const SizedBox(height: 20),
+              // Price
+              const Text('Price', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 5),
+              TFFForAddProduct(
+                onChanged: (data) {
+                  try {
+                    data = data.replaceAll('EGP', '').replaceAll(',', '');
+                    if (data == '') {
+                      product.price = null;
+                    } else {
+                      product.price = double.parse(data);
+                    }
+                  } catch (_) {}
+                },
+                inputFormatters: [LengthLimitingTextInputFormatter(15)],
+                hintText: 'Enter Price',
+                controller: NumberEditingTextController.currency(
+                  value: product.price,
+                  allowNegative: false,
+                  currencySymbol: 'EGP',
+                  groupSeparator: ',',
+                  decimalSeparator: '.',
+                ),
+              ),
+              const SizedBox(height: 20),
 
-            // Quantity
-            const Text('Quantity', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 5),
-            TFFForAddProduct(
-              onFieldSubmitted: (data) {
-                try {
-                  quantityController.number = int.parse(data);
-                } catch (e) {}
-              },
-              hintText: 'Enter Quantity',
-              inputFormatters: [LengthLimitingTextInputFormatter(15)],
-              controller: quantityController,
-            ),
-            const SizedBox(height: 20),
+              // Quantity
+              const Text('Quantity', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 5),
+              TFFForAddProduct(
+                onChanged: (data) {
+                  try {
+                    data = data.replaceAll(',', '');
+                    if (data == '') {
+                      product.quantity = null;
+                    } else {
+                      product.quantity = int.parse(data);
+                    }
+                  } catch (_) {}
+                },
+                hintText: 'Enter Quantity',
+                inputFormatters: [LengthLimitingTextInputFormatter(15)],
+                controller: NumberEditingTextController.integer(value: product.quantity, allowNegative: false),
+              ),
+              const SizedBox(height: 20),
 
-            // Abbreviation
-            const Text('Abbreviation', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 5),
-            TFFForAddProduct(
-              onFieldSubmitted: (data) {
-                abbreviationController.text = data.trim().toUpperCase();
-              },
-              inputFormatters: [
-                UpperCaseTextFormatter(),
-                FilteringTextInputFormatter.deny(RegExp(' ')),
-                LengthLimitingTextInputFormatter(15),
-              ],
-              hintText: 'Enter Device Abbreviation',
-              controller: abbreviationController,
-            ),
-            const SizedBox(height: 20),
+              // Abbreviation
+              const Text('Abbreviation', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 5),
+              TFFForAddProduct(
+                onChanged: (data) {
+                  product.abbreviation = data.trim().toUpperCase();
+                },
+                inputFormatters: [
+                  UpperCaseTextFormatter(),
+                  FilteringTextInputFormatter.deny(RegExp(' ')),
+                  LengthLimitingTextInputFormatter(15),
+                ],
+                hintText: 'Enter Device Abbreviation',
+                controller: TextEditingController(text: product.abbreviation),
+              ),
+              const SizedBox(height: 20),
 
-            // Compatibility
-            const Text('Compatibility', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 5),
-            ChooseAndShowCompatibleDevices(allCompatibleDevicesCopy: allCompatibleDevices.toSet()),
-            const SizedBox(height: 20),
+              // Compatibility
+              const Text('Compatibility', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 5),
+              ChooseAndShowCompatibleDevices(allCompatibleDevices: allCompatibleDevices, product: product),
+              const SizedBox(height: 20),
 
-            // Note
-            const Text('Notes', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 5),
-            TFFForAddProduct(
-              onFieldSubmitted: (data) {
-                noteController.text = data.trim();
-              },
-              multiLine: true,
-              hintText: '',
-              controller: noteController,
-            ),
-            const SizedBox(height: 20),
+              // Note
+              const Text('Notes', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 5),
+              TFFForAddProduct(
+                onChanged: (data) {
+                  product.note = data.trim();
+                },
+                multiLine: true,
+                hintText: '',
+                controller: TextEditingController(text: product.note),
+              ),
+              const SizedBox(height: 20),
 
-            // Save Changes
-            CustomButton(
-              onTap: () {
-                FocusManager.instance.primaryFocus?.unfocus();
-                sendEditedProductToFireStore(
-                  context,
-                  modelController,
-                  descriptionController,
-                  priceController,
-                  quantityController,
-                  imageController,
-                  abbreviationController,
-                  noteController,
-                );
-              },
-              widget: textOfCustomButton(text: 'Save Changes'),
-              color: KPrimayColor,
-              borderColor: KPrimayColor,
-            ),
-            const SizedBox(height: 10),
+              // Save Changes
+              CustomButton(
+                onTap: () async {
+                  isLoading = true;
+                  setState(() {});
+                  FocusManager.instance.primaryFocus?.unfocus();
+                  await sendEditedProductToFireStore(context, product);
+                },
+                widget: textOfCustomButton(text: 'Save Changes'),
+                color: KPrimayColor,
+                borderColor: KPrimayColor,
+              ),
+              const SizedBox(height: 10),
 
-            // Delete Product
-            CustomButton(
-              onTap: () async {
-                await deleteProduct(providerProduct, context);
-                showSnackBar(context, 'Product Deleted Successfully');
-                nullingProviderVars(context);
-                Navigator.pop(context);
-              },
-              widget: textOfCustomButton(text: 'Delete Product'),
-              color: Colors.red,
-              borderColor: Colors.red,
-            ),
-          ],
+              // Delete Product
+              CustomButton(
+                onTap: () async {
+                  isLoading = true;
+                  setState(() {});
+                  await deleteProduct(product, context);
+                  showSnackBar(context, 'Product Deleted Successfully');
+                  nullingProductDetails(context);
+                  Navigator.pop(context);
+                },
+                widget: textOfCustomButton(text: 'Delete Product'),
+                color: Colors.red,
+                borderColor: Colors.red,
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-void sendEditedProductToFireStore(
-  BuildContext context,
-  TextEditingController modelController,
-  TextEditingController descriptionController,
-  NumberEditingTextController priceController,
-  NumberEditingTextController quantityController,
-  TextEditingController imageController,
-  TextEditingController abbreviationController,
-  TextEditingController noteController,
-) async {
+Future<void> sendEditedProductToFireStore(BuildContext context, ProductModel product) async {
   try {
-    ProductModel? product = ProductModel(
-      model: modelController.text,
-      description: descriptionController.text,
-      category: Provider.of<ProviderVariables>(context, listen: false).category!,
-      used: Provider.of<ProviderVariables>(context, listen: false).used!,
-      price: priceController.number == null ? null : priceController.number!.toDouble(),
-      quantity: quantityController.number == null ? null : quantityController.number!.toInt(),
-      image: imageController.text,
-      abbreviation: abbreviationController.text,
-      compatibility: Provider.of<ProviderVariables>(context, listen: false).compatibility,
-      note: noteController.text,
-    );
     await addProductToAccount(product: product, email: Provider.of<ProviderVariables>(context, listen: false).email!);
     showSnackBar(context, 'Product Added Successfully');
-    nullingProviderVars(context);
+    nullingProductDetails(context);
     Navigator.pop(context);
   } catch (e) {
     showSnackBar(context, 'Error, try again');
-  }
-}
-
-// ignore: must_be_immutable
-class ChooseAndShowCompatibleDevices extends StatefulWidget {
-  ChooseAndShowCompatibleDevices({super.key, required this.allCompatibleDevicesCopy});
-
-  Set<String> allCompatibleDevicesCopy;
-
-  @override
-  State<ChooseAndShowCompatibleDevices> createState() => _ChooseAndShowCompatibleDevicesState();
-}
-
-class _ChooseAndShowCompatibleDevicesState extends State<ChooseAndShowCompatibleDevices> {
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        CustomDropdownButton(
-          initialText: widget.allCompatibleDevicesCopy.isEmpty ? null : widget.allCompatibleDevicesCopy.first,
-          thingsToDisplay: widget.allCompatibleDevicesCopy.toList(),
-          onSelected: (value) {
-            setState(() {
-              widget.allCompatibleDevicesCopy.remove(value);
-              if (Provider.of<ProviderVariables>(context, listen: false).compatibility == null) {
-                Provider.of<ProviderVariables>(context, listen: false).compatibility = {};
-              }
-              Provider.of<ProviderVariables>(context, listen: false).compatibility!.add(value);
-            });
-          },
-        ),
-        const SizedBox(height: 5),
-        Container(
-          width: double.infinity,
-          height: 200,
-          decoration: BoxDecoration(borderRadius: KRadius, border: Border.all(color: Colors.grey)),
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: KHorizontalPadding),
-            child: Column(
-              children: Provider.of<ProviderVariables>(context, listen: false).compatibility != null
-                  ? Provider.of<ProviderVariables>(context, listen: false).compatibility!.map((e) {
-                      return Card(
-                        margin: const EdgeInsets.symmetric(vertical: 8),
-                        shape: RoundedRectangleBorder(side: const BorderSide(width: 2, color: KPrimayColor), borderRadius: KRadius),
-                        child: ListTile(
-                          title: Text(e, style: const TextStyle(fontSize: 22)),
-                          trailing: IconButton(
-                              onPressed: () {
-                                setState(() {
-                                  widget.allCompatibleDevicesCopy.add(e);
-                                  Provider.of<ProviderVariables>(context, listen: false).compatibility!.remove(e);
-                                });
-                              },
-                              icon: const Icon(Icons.clear)),
-                        ),
-                      );
-                    }).toList()
-                  : <Widget>[],
-            ),
-          ),
-        ),
-      ],
-    );
   }
 }
 

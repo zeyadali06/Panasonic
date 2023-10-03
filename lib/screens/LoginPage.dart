@@ -191,7 +191,6 @@ Future<void> loginNormally(BuildContext context, String emailOrUsername, String 
       showSnackBar(context, 'Error');
     }
   } catch (exc) {
-    print(exc);
     showSnackBar(context, 'Error');
   }
 }

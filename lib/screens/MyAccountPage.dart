@@ -3,6 +3,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
+import 'package:panasonic/components/helper.dart';
 import 'package:panasonic/constants.dart';
 import 'package:panasonic/main.dart';
 import 'package:provider/provider.dart';
@@ -165,11 +166,8 @@ class _MyAccountPageState extends State<MyAccountPage> {
                   loading = true;
                 });
                 await FirebaseAuth.instance.signOut();
-                Provider.of<ProviderVariables>(context, listen: false).category = null;
-                Provider.of<ProviderVariables>(context, listen: false).compatibility = null;
+                nullingProductDetails(context);
                 Provider.of<ProviderVariables>(context, listen: false).email = null;
-                Provider.of<ProviderVariables>(context, listen: false).product = null;
-                Provider.of<ProviderVariables>(context, listen: false).used = null;
                 Provider.of<ProviderVariables>(context, listen: false).username = null;
                 Navigator.pushReplacementNamed(context, 'LoginPage');
               },

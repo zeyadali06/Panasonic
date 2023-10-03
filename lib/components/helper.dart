@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:number_editing_controller/number_editing_controller.dart';
 import 'package:panasonic/constants.dart';
 import 'package:panasonic/main.dart';
+import 'package:panasonic/models/ProductModel.dart';
 import 'package:provider/provider.dart';
 
 class TFFForAddProduct extends StatefulWidget {
@@ -10,7 +10,6 @@ class TFFForAddProduct extends StatefulWidget {
     super.key,
     required this.hintText,
     this.controller,
-    this.numberController,
     this.onFieldSubmitted,
     this.onChanged,
     this.validate = false,
@@ -27,7 +26,6 @@ class TFFForAddProduct extends StatefulWidget {
   final List<TextInputFormatter>? inputFormatters;
   final bool multiLine;
   final TextEditingController? controller;
-  final NumberEditingTextController? numberController;
   final bool enabled;
   final bool validate;
 
@@ -88,16 +86,6 @@ class _TFFForAddProductState extends State<TFFForAddProduct> {
           hintStyle: TextStyle(color: color),
           prefixText: widget.prefixText,
           prefixStyle: const TextStyle(fontSize: 18),
-          suffixIcon: IconButton(
-            onPressed: () {
-              if (widget.controller != null) {
-                widget.controller!.clear();
-              } else if (widget.numberController != null) {
-                widget.numberController!.clear();
-              }
-            },
-            icon: Icon(Icons.clear, color: color),
-          ),
         ),
       ),
     );
@@ -216,30 +204,38 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
   }
 }
 
-// ignore: must_be_immutable
-class CustomCheckBox extends StatefulWidget {
-  CustomCheckBox({super.key, required this.isChecked});
+// // ignore: must_be_immutable
+// class CustomCheckBox extends StatefulWidget {
+//   CustomCheckBox({super.key, required this.isChecked, required this.onChanged});
 
-  bool? isChecked = false;
+//   bool isChecked;
+//   bool Function(bool value) onChanged;
 
-  @override
-  State<CustomCheckBox> createState() => _CustomCheckBoxState();
-}
+//   @override
+//   State<CustomCheckBox> createState() => _CustomCheckBoxState();
+// }
 
-class _CustomCheckBoxState extends State<CustomCheckBox> {
-  @override
-  Widget build(BuildContext context) {
-    return Checkbox(
-      checkColor: Colors.white,
-      value: Provider.of<ProviderVariables>(context, listen: false).used,
-      onChanged: (value) {
-        setState(() {
-          Provider.of<ProviderVariables>(context, listen: false).used = value;
-        });
-      },
-    );
-  }
-}
+// class _CustomCheckBoxState extends State<CustomCheckBox> {
+//   static late bool isChecked;
+
+//   @override
+//   void initState() {
+//     isChecked = widget.isChecked;
+//     super.initState();
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Checkbox(
+//       checkColor: Colors.white,
+//       value: isChecked,
+//       onChanged: (value) {
+//         isChecked = widget.onChanged(value!);
+//         setState(() {});
+//       },
+//     );
+//   }
+// }
 
 // ignore: must_be_immutable
 class CustomDropdownButton extends StatefulWidget {
@@ -272,6 +268,64 @@ class _CustomDropdownButtonState extends State<CustomDropdownButton> {
       inputDecorationTheme: InputDecorationTheme(
         border: OutlineInputBorder(borderRadius: KRadius),
       ),
+    );
+  }
+}
+
+// ignore: must_be_immutable
+class ChooseAndShowCompatibleDevices extends StatefulWidget {
+  ChooseAndShowCompatibleDevices({super.key, required this.allCompatibleDevices, required this.product});
+
+  Set<String> allCompatibleDevices;
+  ProductModel product;
+
+  @override
+  State<ChooseAndShowCompatibleDevices> createState() => _ChooseAndShowCompatibleDevicesState();
+}
+
+class _ChooseAndShowCompatibleDevicesState extends State<ChooseAndShowCompatibleDevices> {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        CustomDropdownButton(
+          initialText: widget.allCompatibleDevices.first,
+          thingsToDisplay: widget.allCompatibleDevices.toList(),
+          onSelected: (value) {
+            widget.product.compatibility ??= {};
+            widget.product.compatibility!.add(value);
+            setState(() {});
+          },
+        ),
+        const SizedBox(height: 5),
+        Container(
+          width: double.infinity,
+          height: 200,
+          decoration: BoxDecoration(borderRadius: KRadius, border: Border.all(color: Colors.grey)),
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: KHorizontalPadding),
+            child: Column(
+              children: widget.product.compatibility != null
+                  ? widget.product.compatibility!.map((e) {
+                      return Card(
+                        margin: const EdgeInsets.symmetric(vertical: 8),
+                        shape: RoundedRectangleBorder(side: const BorderSide(width: 2, color: KPrimayColor), borderRadius: KRadius),
+                        child: ListTile(
+                          title: Text(e, style: const TextStyle(fontSize: 22)),
+                          trailing: IconButton(
+                              onPressed: () {
+                                widget.product.compatibility!.remove(e);
+                                setState(() {});
+                              },
+                              icon: const Icon(Icons.clear)),
+                        ),
+                      );
+                    }).toList()
+                  : <Widget>[],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -366,7 +420,7 @@ Text textOfCustomButton({required text}) {
   return Text(text, style: const TextStyle(color: Colors.white, fontSize: 20));
 }
 
-void nullingProviderVars(BuildContext context) {
+void nullingProductDetails(BuildContext context) {
   Provider.of<ProviderVariables>(context, listen: false).product = null;
   Provider.of<ProviderVariables>(context, listen: false).compatibility = null;
   Provider.of<ProviderVariables>(context, listen: false).category = null;

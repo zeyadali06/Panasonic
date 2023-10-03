@@ -28,7 +28,7 @@ class _SearchPageState extends State<SearchPage> {
           width: 80,
           child: MaterialButton(
             onPressed: () {
-              Provider.of<ProviderVariables>(context, listen: false).product = null;
+              nullingProductDetails(context);
               Navigator.pushNamed(context, 'AddProductPage');
             },
             shape: RoundedRectangleBorder(borderRadius: KRadius),
@@ -47,6 +47,7 @@ class _SearchPageState extends State<SearchPage> {
                   deviceName = data.toUpperCase().trim();
                   setState(() {});
                 },
+                onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
                 style: const TextStyle(fontSize: 18),
                 decoration: const InputDecoration(
                   prefixIcon: Icon(Icons.search),
