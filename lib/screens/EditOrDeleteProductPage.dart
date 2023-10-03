@@ -21,7 +21,7 @@ class EditOrDeleteProductPage extends StatefulWidget {
 class _EditOrDeleteProductPageState extends State<EditOrDeleteProductPage> {
   @override
   void deactivate() {
-    nullingProductDetails(context);
+    Provider.of<ProviderVariables>(context, listen: false).product = null;
     super.deactivate();
   }
 
@@ -182,7 +182,7 @@ class _EditOrDeleteProductPageState extends State<EditOrDeleteProductPage> {
                   setState(() {});
                   await deleteProduct(product, context);
                   showSnackBar(context, 'Product Deleted Successfully');
-                  nullingProductDetails(context);
+                 Provider.of<ProviderVariables>(context, listen: false).product = null;
                   Navigator.pop(context);
                 },
                 widget: textOfCustomButton(text: 'Delete Product'),
@@ -201,7 +201,7 @@ Future<void> sendEditedProductToFireStore(BuildContext context, ProductModel pro
   try {
     await addProductToAccount(product: product, email: Provider.of<ProviderVariables>(context, listen: false).email!);
     showSnackBar(context, 'Product Added Successfully');
-    nullingProductDetails(context);
+    Provider.of<ProviderVariables>(context, listen: false).product = null;
     Navigator.pop(context);
   } catch (e) {
     showSnackBar(context, 'Error, try again');

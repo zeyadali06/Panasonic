@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:panasonic/constants.dart';
-import 'package:panasonic/main.dart';
 import 'package:panasonic/models/ProductModel.dart';
-import 'package:provider/provider.dart';
 
 class TFFForAddProduct extends StatefulWidget {
   const TFFForAddProduct({
@@ -204,39 +202,6 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
   }
 }
 
-// // ignore: must_be_immutable
-// class CustomCheckBox extends StatefulWidget {
-//   CustomCheckBox({super.key, required this.isChecked, required this.onChanged});
-
-//   bool isChecked;
-//   bool Function(bool value) onChanged;
-
-//   @override
-//   State<CustomCheckBox> createState() => _CustomCheckBoxState();
-// }
-
-// class _CustomCheckBoxState extends State<CustomCheckBox> {
-//   static late bool isChecked;
-
-//   @override
-//   void initState() {
-//     isChecked = widget.isChecked;
-//     super.initState();
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Checkbox(
-//       checkColor: Colors.white,
-//       value: isChecked,
-//       onChanged: (value) {
-//         isChecked = widget.onChanged(value!);
-//         setState(() {});
-//       },
-//     );
-//   }
-// }
-
 // ignore: must_be_immutable
 class CustomDropdownButton extends StatefulWidget {
   CustomDropdownButton({super.key, required this.thingsToDisplay, required this.initialText, this.enabled = true, required this.onSelected});
@@ -418,11 +383,4 @@ void showSnackBar(BuildContext context, String message) {
 
 Text textOfCustomButton({required text}) {
   return Text(text, style: const TextStyle(color: Colors.white, fontSize: 20));
-}
-
-void nullingProductDetails(BuildContext context) {
-  Provider.of<ProviderVariables>(context, listen: false).product = null;
-  Provider.of<ProviderVariables>(context, listen: false).compatibility = null;
-  Provider.of<ProviderVariables>(context, listen: false).category = null;
-  Provider.of<ProviderVariables>(context, listen: false).used = null;
 }

@@ -28,7 +28,7 @@ class _SearchPageState extends State<SearchPage> {
           width: 80,
           child: MaterialButton(
             onPressed: () {
-              nullingProductDetails(context);
+              Provider.of<ProviderVariables>(context, listen: false).product = null;
               Navigator.pushNamed(context, 'AddProductPage');
             },
             shape: RoundedRectangleBorder(borderRadius: KRadius),

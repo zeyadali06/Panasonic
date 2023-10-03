@@ -50,7 +50,4 @@ class ProviderVariables extends ChangeNotifier {
   String? username;
 
   ProductModel? product;
-  bool? used;
-  String? category;
-  Set<dynamic>? compatibility;
 }

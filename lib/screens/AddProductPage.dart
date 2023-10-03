@@ -20,7 +20,7 @@ class AddProductPage extends StatefulWidget {
 class _AddProductPageState extends State<AddProductPage> {
   @override
   void deactivate() {
-    nullingProductDetails(context);
+    Provider.of<ProviderVariables>(context, listen: false).product = null;
     super.deactivate();
   }
 
@@ -220,7 +220,7 @@ class _AddProductPageState extends State<AddProductPage> {
                 // Clear All
                 CustomButton(
                   onTap: () {
-                    nullingProductDetails(context);
+                    Provider.of<ProviderVariables>(context, listen: false).product = null;
                     Navigator.pushReplacementNamed(context, 'AddProductPage');
                   },
                   widget: textOfCustomButton(text: 'Clear All'),
@@ -248,7 +248,7 @@ Future<void> sendProductToFireStore(BuildContext context, ProductModel product) 
       ),
     );
     showSnackBar(context, 'Product Added Successfully');
-    nullingProductDetails(context);
+    Provider.of<ProviderVariables>(context, listen: false).product = null;
     Navigator.pop(context);
   } catch (e) {
     showSnackBar(context, 'Error, try again');
