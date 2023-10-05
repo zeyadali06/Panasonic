@@ -28,7 +28,7 @@ class _SplachScreenState extends State<SplachScreen> with SingleTickerProviderSt
       switch (status) {
         case InternetConnectionStatus.connected:
           await Future.delayed(const Duration(seconds: 2));
-          Navigator.of(context).pushReplacementNamed('LoginPage');
+          Navigator.pushReplacementNamed(context, 'LoginPage');
           break;
         case InternetConnectionStatus.disconnected:
           ScaffoldMessenger.of(context).showSnackBar(

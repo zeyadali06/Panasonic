@@ -42,25 +42,25 @@ class _EditOrDeleteProductPageState extends State<EditOrDeleteProductPage> {
             padding: const EdgeInsets.all(KHorizontalPadding),
             children: [
               // Device Model
-              const LabelWithRedStar(label: 'Device Model'),
+              const Text('Device Model', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
               const SizedBox(height: 5),
-              TFFForAddProduct(
+              TFForAddProduct(
                 hintText: product.model,
                 enabled: false,
               ),
               const SizedBox(height: 20),
 
               // Description
-              const LabelWithRedStar(label: 'Description'),
+              const Text('Description', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
               const SizedBox(height: 5),
-              TFFForAddProduct(
+              TFForAddProduct(
                 hintText: product.description,
                 enabled: false,
               ),
               const SizedBox(height: 20),
 
               // Category
-              const LabelWithRedStar(label: 'Category Of Device'),
+              const Text('Category', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
               const SizedBox(height: 5),
               CustomDropdownButton(
                 enabled: false,
@@ -73,8 +73,8 @@ class _EditOrDeleteProductPageState extends State<EditOrDeleteProductPage> {
               // Used
               Row(
                 children: [
-                  const LabelWithRedStar(label: 'Used'),
-                  Checkbox(value: product.used, onChanged: (value) {}),
+                  const Text('Used', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                  Checkbox(value: product.used, onChanged: (value) {}, activeColor: KPrimayColor),
                 ],
               ),
               const SizedBox(height: 20),
@@ -82,7 +82,7 @@ class _EditOrDeleteProductPageState extends State<EditOrDeleteProductPage> {
               // Price
               const Text('Price', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
               const SizedBox(height: 5),
-              TFFForAddProduct(
+              TFForAddProduct(
                 onChanged: (data) {
                   try {
                     data = data.replaceAll('EGP', '').replaceAll(',', '');
@@ -93,12 +93,24 @@ class _EditOrDeleteProductPageState extends State<EditOrDeleteProductPage> {
                     }
                   } catch (_) {}
                 },
-                inputFormatters: [LengthLimitingTextInputFormatter(15)],
                 hintText: 'Enter Price',
-                controller: NumberEditingTextController.currency(
+                suffixText: 'EGP',
+                inputFormatters: [
+                  LengthLimitingTextInputFormatter(15),
+                  FilteringTextInputFormatter.deny(RegExp(' ')),
+                  FilteringTextInputFormatter.allow(RegExp(r"[0-9]*\.?[0-9]*")),
+                  TextInputFormatter.withFunction((oldValue, newValue) {
+                    if (oldValue.text == '' && newValue.text == '.') {
+                      return const TextEditingValue(text: '0.');
+                    } else {
+                      return newValue;
+                    }
+                  }),
+                ],
+                controller: NumberEditingTextController.decimal(
                   value: product.price,
                   allowNegative: false,
-                  currencySymbol: 'EGP',
+                  maximumFractionDigits: 2,
                   groupSeparator: ',',
                   decimalSeparator: '.',
                 ),
@@ -108,7 +120,7 @@ class _EditOrDeleteProductPageState extends State<EditOrDeleteProductPage> {
               // Quantity
               const Text('Quantity', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
               const SizedBox(height: 5),
-              TFFForAddProduct(
+              TFForAddProduct(
                 onChanged: (data) {
                   try {
                     data = data.replaceAll(',', '');
@@ -128,7 +140,7 @@ class _EditOrDeleteProductPageState extends State<EditOrDeleteProductPage> {
               // Abbreviation
               const Text('Abbreviation', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
               const SizedBox(height: 5),
-              TFFForAddProduct(
+              TFForAddProduct(
                 onChanged: (data) {
                   product.abbreviation = data.trim().toUpperCase();
                 },
@@ -151,7 +163,7 @@ class _EditOrDeleteProductPageState extends State<EditOrDeleteProductPage> {
               // Note
               const Text('Notes', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
               const SizedBox(height: 5),
-              TFFForAddProduct(
+              TFForAddProduct(
                 onChanged: (data) {
                   product.note = data.trim();
                 },
@@ -182,7 +194,7 @@ class _EditOrDeleteProductPageState extends State<EditOrDeleteProductPage> {
                   setState(() {});
                   await deleteProduct(product, context);
                   showSnackBar(context, 'Product Deleted Successfully');
-                 Provider.of<ProviderVariables>(context, listen: false).product = null;
+                  Provider.of<ProviderVariables>(context, listen: false).product = null;
                   Navigator.pop(context);
                 },
                 widget: textOfCustomButton(text: 'Delete Product'),

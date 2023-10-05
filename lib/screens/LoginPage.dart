@@ -167,6 +167,7 @@ Future<void> loginNormally(BuildContext context, String emailOrUsername, String 
 
     if (email == null) {
       var uidDocument = await FirebaseFirestore.instance.collection(usernameCollection).where('username', isEqualTo: username).limit(1).get();
+      uidDocument.docs.isEmpty ? throw FirebaseAuthException(code: 'username-not-found') : null;
       email = await SignIn.getEmailFromFirestore(uidDocument.docs[0].id);
       await SignIn.signIn(email!, password);
     } else if (username == null) {
@@ -176,21 +177,26 @@ Future<void> loginNormally(BuildContext context, String emailOrUsername, String 
 
     Provider.of<ProviderVariables>(context, listen: false).email = email;
     Provider.of<ProviderVariables>(context, listen: false).username = username;
-
     Navigator.pushReplacementNamed(context, 'HomeNavigationBar');
   } on FirebaseAuthException catch (exc) {
     if (exc.code == 'user-not-found') {
       showSnackBar(context, 'Email not found');
+    } else if (exc.code == 'username-not-found') {
+      showSnackBar(context, 'Username not found');
     } else if (exc.code == 'wrong-password') {
-      showSnackBar(context, 'Wrong Email or Password');
+      showSnackBar(context, 'Wrong password');
     } else if (exc.code == 'invalid-email') {
-      showSnackBar(context, 'Invalid Email');
+      showSnackBar(context, 'Invalid email');
     } else if (exc.code == 'network-request-failed') {
-      showSnackBar(context, 'No Internet');
+      showSnackBar(context, 'No internet');
+    } else if (exc.code == 'too-many-requests') {
+      showSnackBar(context, 'Too many attempts, Try again later');
     } else {
+      print(exc);
       showSnackBar(context, 'Error');
     }
   } catch (exc) {
+    print(exc);
     showSnackBar(context, 'Error');
   }
 }

@@ -33,12 +33,12 @@ class _AddProductPageState extends State<AddProductPage> {
 
   @override
   Widget build(BuildContext context) {
-    ProductModel providerProduct = Provider.of<ProviderVariables>(context, listen: false).product == null
+    ProductModel product = Provider.of<ProviderVariables>(context, listen: false).product == null
         ? ProductModel(model: '', description: '', category: '', used: false)
         : Provider.of<ProviderVariables>(context, listen: false).product!;
 
-    if (providerProduct.model != '') {
-      modelController.text = providerProduct.model;
+    if (product.model != '') {
+      modelController.text = product.model;
     }
 
     return GestureDetector(
@@ -56,10 +56,10 @@ class _AddProductPageState extends State<AddProductPage> {
                 // Device Model
                 const LabelWithRedStar(label: 'Device Model'),
                 const SizedBox(height: 5),
-                TFFForAddProduct(
+                TFForAddProduct(
                   hintText: 'Enter Device Model',
                   onChanged: (data) {
-                    providerProduct.model = data.toUpperCase().trim();
+                    product.model = data.toUpperCase().trim();
                   },
                   inputFormatters: [
                     UpperCaseTextFormatter(),
@@ -73,10 +73,10 @@ class _AddProductPageState extends State<AddProductPage> {
                 // Description
                 const LabelWithRedStar(label: 'Description'),
                 const SizedBox(height: 5),
-                TFFForAddProduct(
+                TFForAddProduct(
                   hintText: 'Enter Device Description',
                   onChanged: (data) {
-                    providerProduct.description = data.trim();
+                    product.description = data;
                   },
                 ),
                 const SizedBox(height: 20),
@@ -88,7 +88,7 @@ class _AddProductPageState extends State<AddProductPage> {
                   initialText: allCategories.first,
                   thingsToDisplay: allCategories.toList(),
                   onSelected: (value) {
-                    providerProduct.category = value!;
+                    product.category = value!;
                   },
                 ),
                 const SizedBox(height: 10),
@@ -97,12 +97,11 @@ class _AddProductPageState extends State<AddProductPage> {
                 Row(
                   children: [
                     const LabelWithRedStar(label: 'Used'),
-                    Checkbox(
-                      value: isChecked,
-                      onChanged: (bool? value) {
-                        isChecked = value!;
-                        providerProduct.used = isChecked;
-                        setState(() {});
+                    CustomCheckbox(
+                      initialValue: isChecked,
+                      onChanged: (value) {
+                        isChecked = value;
+                        product.used = isChecked;
                       },
                     ),
                   ],
@@ -112,23 +111,34 @@ class _AddProductPageState extends State<AddProductPage> {
                 // Price
                 const Text('Price', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 5),
-                TFFForAddProduct(
+                TFForAddProduct(
                   onChanged: (data) {
                     try {
                       data = data.replaceAll('EGP', '').replaceAll(',', '');
                       if (data == '') {
-                        providerProduct.price = null;
+                        product.price = null;
                       } else {
-                        providerProduct.price = double.parse(data);
+                        product.price = double.parse(data);
                       }
                     } catch (_) {}
                   },
                   hintText: 'Enter Price',
-                  inputFormatters: [LengthLimitingTextInputFormatter(15)],
-                  controller: NumberEditingTextController.currency(
-                    value: providerProduct.price,
+                  suffixText: 'EGP',
+                  inputFormatters: [
+                    LengthLimitingTextInputFormatter(15),
+                    FilteringTextInputFormatter.deny(RegExp(' ')),
+                    FilteringTextInputFormatter.allow(RegExp(r"[0-9]*\.?[0-9]*")),
+                    TextInputFormatter.withFunction((oldValue, newValue) {
+                      if (oldValue.text == '' && newValue.text == '.') {
+                        return const TextEditingValue(text: '0.');
+                      } else {
+                        return newValue;
+                      }
+                    }),
+                  ],
+                  controller: NumberEditingTextController.decimal(
                     allowNegative: false,
-                    currencySymbol: 'EGP',
+                    maximumFractionDigits: 2,
                     groupSeparator: ',',
                     decimalSeparator: '.',
                   ),
@@ -138,14 +148,14 @@ class _AddProductPageState extends State<AddProductPage> {
                 // Quantity
                 const Text('Quantity', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 5),
-                TFFForAddProduct(
+                TFForAddProduct(
                   onChanged: (data) {
                     try {
                       data = data.replaceAll(',', '');
                       if (data == '') {
-                        providerProduct.quantity = null;
+                        product.quantity = null;
                       } else {
-                        providerProduct.quantity = int.parse(data);
+                        product.quantity = int.parse(data);
                       }
                     } catch (_) {}
                   },
@@ -155,16 +165,16 @@ class _AddProductPageState extends State<AddProductPage> {
                     LengthLimitingTextInputFormatter(15),
                   ],
                   hintText: 'Enter Quantity',
-                  controller: NumberEditingTextController.integer(value: providerProduct.quantity, allowNegative: false),
+                  controller: NumberEditingTextController.integer(allowNegative: false),
                 ),
                 const SizedBox(height: 20),
 
                 // Abbreviation
                 const Text('Abbreviation', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 5),
-                TFFForAddProduct(
+                TFForAddProduct(
                   onChanged: (data) {
-                    providerProduct.abbreviation = data.trim().toUpperCase();
+                    product.abbreviation = data.trim().toUpperCase();
                   },
                   inputFormatters: [
                     UpperCaseTextFormatter(),
@@ -178,15 +188,15 @@ class _AddProductPageState extends State<AddProductPage> {
                 // Compatibility
                 const Text('Compatibility', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 5),
-                ChooseAndShowCompatibleDevices(product: providerProduct, allCompatibleDevices: allCompatibleDevices.toSet()),
+                ChooseAndShowCompatibleDevices(product: product, allCompatibleDevices: allCompatibleDevices.toSet()),
                 const SizedBox(height: 20),
 
                 // Note
                 const Text('Notes', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 5),
-                TFFForAddProduct(
+                TFForAddProduct(
                   onChanged: (data) {
-                    providerProduct.note = data.trim();
+                    product.note = data.trim();
                   },
                   multiLine: true,
                   hintText: '',
@@ -196,12 +206,12 @@ class _AddProductPageState extends State<AddProductPage> {
                 // Add Product
                 CustomButton(
                   onTap: () async {
-                    if (providerProduct.model == '') {
+                    if (product.model == '') {
                       showSnackBar(context, 'Device model is empty');
                       scrollController.animateTo(0.0, duration: const Duration(milliseconds: 500), curve: Curves.ease);
                       return;
                     }
-                    if (providerProduct.description == '') {
+                    if (product.description == '') {
                       showSnackBar(context, 'Device description is empty');
                       scrollController.animateTo(0.0, duration: const Duration(milliseconds: 500), curve: Curves.ease);
                       return;
@@ -209,7 +219,7 @@ class _AddProductPageState extends State<AddProductPage> {
                     isLoading = true;
                     setState(() {});
                     FocusManager.instance.primaryFocus?.unfocus();
-                    await sendProductToFireStore(context, providerProduct);
+                    await sendProductToFireStore(context, product);
                   },
                   widget: textOfCustomButton(text: 'Add Product'),
                   color: KPrimayColor,
@@ -247,6 +257,7 @@ Future<void> sendProductToFireStore(BuildContext context, ProductModel product) 
         used: false,
       ),
     );
+    print(product.toString());
     showSnackBar(context, 'Product Added Successfully');
     Provider.of<ProviderVariables>(context, listen: false).product = null;
     Navigator.pop(context);
@@ -254,8 +265,6 @@ Future<void> sendProductToFireStore(BuildContext context, ProductModel product) 
     showSnackBar(context, 'Error, try again');
   }
 }
-
-
 
 // zeyad@gmail.com
 

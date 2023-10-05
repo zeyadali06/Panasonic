@@ -3,38 +3,33 @@ import 'package:flutter/services.dart';
 import 'package:panasonic/constants.dart';
 import 'package:panasonic/models/ProductModel.dart';
 
-class TFFForAddProduct extends StatefulWidget {
-  const TFFForAddProduct({
+class TFForAddProduct extends StatefulWidget {
+  const TFForAddProduct({
     super.key,
     required this.hintText,
     this.controller,
-    this.onFieldSubmitted,
     this.onChanged,
-    this.validate = false,
     this.multiLine = false,
     this.enabled = true,
-    this.prefixText,
+    this.suffixText,
     this.inputFormatters,
   });
 
   final String hintText;
-  final String? prefixText;
+  final String? suffixText;
   final void Function(String data)? onChanged;
-  final void Function(String data)? onFieldSubmitted;
   final List<TextInputFormatter>? inputFormatters;
   final bool multiLine;
   final TextEditingController? controller;
   final bool enabled;
-  final bool validate;
 
   @override
-  State<TFFForAddProduct> createState() => _TFFForAddProductState();
+  State<TFForAddProduct> createState() => _TFForAddProductState();
 }
 
-class _TFFForAddProductState extends State<TFFForAddProduct> {
+class _TFForAddProductState extends State<TFForAddProduct> {
   bool? foucs;
   Color color = Colors.grey;
-  final errorColor = Colors.red;
   final noErrorFoucsColor = KPrimayColor;
   final noErrornoFoucsColor = Colors.grey;
 
@@ -43,37 +38,20 @@ class _TFFForAddProductState extends State<TFFForAddProduct> {
     return Focus(
       onFocusChange: (foucsed) {
         foucs = foucsed;
-        if (foucsed && color != errorColor) {
-          color = noErrorFoucsColor;
-        } else if (foucsed == false && color != errorColor) {
-          color = noErrornoFoucsColor;
+        if (foucsed) {
+          color = KPrimayColor;
+        } else {
+          color = Colors.grey;
         }
         setState(() {});
       },
-      child: TextFormField(
-        validator: (data) {
-          if (widget.validate) {
-            if (data!.isEmpty) {
-              setState(() {
-                color = errorColor;
-              });
-              return 'Field is required';
-            } else if (foucs == true) {
-              color = noErrorFoucsColor;
-            } else {
-              color = noErrornoFoucsColor;
-            }
-            setState(() {});
-          }
-          return null;
-        },
+      child: TextField(
         inputFormatters: widget.inputFormatters,
         keyboardType: widget.multiLine ? TextInputType.multiline : null,
         enabled: widget.enabled,
         maxLines: widget.multiLine ? null : 1,
         cursorColor: color,
         onChanged: widget.onChanged,
-        onFieldSubmitted: widget.onFieldSubmitted,
         controller: widget.controller,
         style: const TextStyle(fontSize: 18),
         minLines: widget.multiLine ? 5 : null,
@@ -82,10 +60,44 @@ class _TFFForAddProductState extends State<TFFForAddProduct> {
           focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: color, width: 2), borderRadius: KRadius),
           hintText: widget.hintText,
           hintStyle: TextStyle(color: color),
-          prefixText: widget.prefixText,
-          prefixStyle: const TextStyle(fontSize: 18),
+          suffixText: widget.suffixText,
+          suffixStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: color),
         ),
       ),
+    );
+  }
+}
+
+class CustomCheckbox extends StatefulWidget {
+  final bool initialValue;
+  final ValueChanged<bool> onChanged;
+
+  const CustomCheckbox({Key? key, required this.initialValue, required this.onChanged}) : super(key: key);
+
+  @override
+  _CustomCheckboxState createState() => _CustomCheckboxState();
+}
+
+class _CustomCheckboxState extends State<CustomCheckbox> {
+  late bool isChecked;
+
+  @override
+  void initState() {
+    super.initState();
+    isChecked = widget.initialValue;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Checkbox(
+      value: isChecked,
+      activeColor: KPrimayColor,
+      onChanged: (bool? value) {
+        setState(() {
+          isChecked = value!;
+        });
+        widget.onChanged(isChecked);
+      },
     );
   }
 }

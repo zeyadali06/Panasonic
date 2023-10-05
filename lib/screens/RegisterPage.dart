@@ -172,14 +172,10 @@ class _RegisterPageState extends State<RegisterPage> {
                             phoneKey.currentState!.validate() &&
                             passwordKey.currentState!.validate() &&
                             confirmPasswordKey.currentState!.validate()) {
-                          if (password != confirmPassword) {
-                            showSnackBar(context, "Password and it's confirmation doesn't same");
-                            return;
-                          }
                           setState(() {
                             isLoading = true;
                           });
-                          await registerNormally(context, email, username, phone, password);
+                          await registerNormally(context, email, username, phone, password, confirmPassword);
                           setState(() {
                             isLoading = false;
                           });
@@ -233,13 +229,11 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 }
 
-Future<void> registerNormally(BuildContext context, String email, String username, String phone, String password) async {
+Future<void> registerNormally(BuildContext context, String email, String username, String phone, String password, String confirmPassword) async {
   try {
     var usernameChecker = await FirebaseFirestore.instance.collection(usernameCollection).where('username', isEqualTo: username).limit(1).get();
-    if (usernameChecker.docs.isNotEmpty) {
-      showSnackBar(context, 'Username Already Exist');
-      return;
-    }
+    usernameChecker.docs.isNotEmpty ? throw FirebaseAuthException(code: 'username-already-in-use') : null;
+    password != confirmPassword ? throw FirebaseAuthException(code: 'wrong-confirmation') : null;
 
     await Register.register(email, username, phone, password);
     Provider.of<ProviderVariables>(context, listen: false).email = email;
@@ -250,6 +244,10 @@ Future<void> registerNormally(BuildContext context, String email, String usernam
       showSnackBar(context, 'Weak password');
     } else if (exc.code == 'email-already-in-use') {
       showSnackBar(context, 'Email already exist');
+    } else if (exc.code == 'username-already-in-use') {
+      showSnackBar(context, 'Username already exist');
+    } else if (exc.code == 'wrong-confirmation') {
+      showSnackBar(context, "Password and it's confirmation dosen't same");
     } else if (exc.code == 'invalid-email') {
       showSnackBar(context, 'Invalid Email');
     } else if (exc.code == 'network-request-failed') {
