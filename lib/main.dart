@@ -2,6 +2,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:panasonic/NavigationBar.dart';
+import 'package:panasonic/constants.dart';
 import 'package:panasonic/firebase_options.dart';
 import 'package:panasonic/models/ProductModel.dart';
 import 'package:panasonic/screens/AddProductPage.dart';
@@ -32,6 +33,28 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: Provider.of<ProviderVariables>(context).dark
+          ? // Dark
+          ThemeData(
+              brightness: Brightness.dark,
+              primaryColor: Colors.grey[700],
+              textTheme: const TextTheme(bodyLarge: TextStyle(color: Colors.white)),
+              appBarTheme: AppBarTheme(backgroundColor: Colors.grey[850], elevation: 0, shape: Border(bottom: BorderSide(color: Colors.grey[800]!))),
+              buttonTheme: ButtonThemeData(colorScheme: ColorScheme.dark(scrim: Colors.white.withOpacity(.5), background: Colors.grey[850]!, outline: Colors.grey[700]!)),
+              bottomNavigationBarTheme: BottomNavigationBarThemeData(backgroundColor: Colors.grey[900], selectedItemColor: Colors.blue, unselectedItemColor: Colors.grey),
+              checkboxTheme: CheckboxThemeData(overlayColor: MaterialStateProperty.all(Colors.blue)),
+              scaffoldBackgroundColor: Colors.grey[900],
+            )
+          : // Light
+          ThemeData(
+              brightness: Brightness.light,
+              primaryColor: KPrimayColor,
+              textTheme: const TextTheme(bodyLarge: TextStyle(color: Colors.black)),
+              appBarTheme: const AppBarTheme(backgroundColor: KPrimayColor),
+              buttonTheme: const ButtonThemeData(colorScheme: ColorScheme.light(scrim: KPrimayColor, background: Colors.white, outline: KPrimayColor)),
+              bottomNavigationBarTheme: BottomNavigationBarThemeData(backgroundColor: Colors.white, selectedItemColor: KPrimayColor, unselectedItemColor: Colors.grey[800]),
+              checkboxTheme: CheckboxThemeData(overlayColor: MaterialStateProperty.all(KPrimayColor)),
+            ),
       routes: {
         'SplachScreen': (context) => const SplachScreen(),
         'RegisterPage': (context) => const RegisterPage(),
@@ -52,4 +75,11 @@ class ProviderVariables extends ChangeNotifier {
   String? username;
 
   ProductModel? product;
+
+  bool _dark = false;
+  bool get dark => _dark;
+  set dark(bool dark) {
+    _dark = dark;
+    notifyListeners();
+  }
 }

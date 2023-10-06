@@ -25,7 +25,7 @@ class _MyProductsPageState extends State<MyProductsPage> {
       inAsyncCall: isLoading,
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: KPrimayColor,
+          backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
           centerTitle: true,
           title: const Text('My Products', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
           actions: [
@@ -72,7 +72,7 @@ class _MyProductsPageState extends State<MyProductsPage> {
                                 ],
                               ),
                               tileColor: Colors.red,
-                              shape: RoundedRectangleBorder(borderRadius: KRadius),
+                              shape: RoundedRectangleBorder(side: const BorderSide(width: 0, color: Colors.red), borderRadius: KRadius),
                             ),
                           ),
                           Dismissible(
@@ -87,7 +87,7 @@ class _MyProductsPageState extends State<MyProductsPage> {
                             },
                             child: Card(
                               elevation: 0,
-                              shape: RoundedRectangleBorder(side: const BorderSide(width: 2, color: KPrimayColor), borderRadius: KRadius),
+                              shape: RoundedRectangleBorder(side: BorderSide(width: 2, color: Theme.of(context).buttonTheme.colorScheme!.outline), borderRadius: KRadius),
                               child: ListTile(
                                 onTap: () {
                                   isLoading = true;
@@ -97,6 +97,8 @@ class _MyProductsPageState extends State<MyProductsPage> {
                                   isLoading = false;
                                   setState(() {});
                                 },
+                                shape: RoundedRectangleBorder(side: BorderSide(width: 0, color: Theme.of(context).buttonTheme.colorScheme!.outline), borderRadius: KRadius),
+                                tileColor: Theme.of(context).buttonTheme.colorScheme!.background,
                                 leading: Text(e.values.single.model, style: const TextStyle(fontSize: 22)),
                                 title: e.values.single.price == null ? null : Center(child: Text("${e.values.single.price}£E", style: const TextStyle(fontSize: 22))),
                                 trailing: Text(e.keys.single ? 'used' : ''),

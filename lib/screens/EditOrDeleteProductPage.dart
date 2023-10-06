@@ -36,7 +36,7 @@ class _EditOrDeleteProductPageState extends State<EditOrDeleteProductPage> {
       child: ModalProgressHUD(
         inAsyncCall: isLoading,
         child: Scaffold(
-          appBar: AppBar(backgroundColor: KPrimayColor),
+          appBar: AppBar(backgroundColor: Theme.of(context).appBarTheme.backgroundColor),
           body: ListView(
             physics: const BouncingScrollPhysics(),
             padding: const EdgeInsets.all(KHorizontalPadding),
@@ -74,7 +74,7 @@ class _EditOrDeleteProductPageState extends State<EditOrDeleteProductPage> {
               Row(
                 children: [
                   const Text('Used', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-                  Checkbox(value: product.used, onChanged: (value) {}, activeColor: KPrimayColor),
+                  Checkbox(value: product.used, onChanged: (value) {}, activeColor: Theme.of(context).checkboxTheme.overlayColor!.resolve({})!),
                 ],
               ),
               const SizedBox(height: 20),
@@ -182,8 +182,8 @@ class _EditOrDeleteProductPageState extends State<EditOrDeleteProductPage> {
                   await sendEditedProductToFireStore(context, product);
                 },
                 widget: textOfCustomButton(text: 'Save Changes'),
-                color: KPrimayColor,
-                borderColor: KPrimayColor,
+                color: Theme.of(context).primaryColor,
+                borderColor: Theme.of(context).primaryColor,
               ),
               const SizedBox(height: 10),
 

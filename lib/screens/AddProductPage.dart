@@ -46,7 +46,7 @@ class _AddProductPageState extends State<AddProductPage> {
       child: ModalProgressHUD(
         inAsyncCall: isLoading,
         child: Scaffold(
-          appBar: AppBar(backgroundColor: KPrimayColor),
+          appBar: AppBar(backgroundColor: Theme.of(context).appBarTheme.backgroundColor),
           body: Form(
             child: ListView(
               physics: const BouncingScrollPhysics(),
@@ -98,6 +98,7 @@ class _AddProductPageState extends State<AddProductPage> {
                   children: [
                     const LabelWithRedStar(label: 'Used'),
                     CustomCheckbox(
+                      activeColor: Theme.of(context).checkboxTheme.overlayColor!.resolve({})!,
                       initialValue: isChecked,
                       onChanged: (value) {
                         isChecked = value;
@@ -222,8 +223,8 @@ class _AddProductPageState extends State<AddProductPage> {
                     await sendProductToFireStore(context, product);
                   },
                   widget: textOfCustomButton(text: 'Add Product'),
-                  color: KPrimayColor,
-                  borderColor: KPrimayColor,
+                  color: Theme.of(context).primaryColor,
+                  borderColor: Theme.of(context).primaryColor,
                 ),
                 const SizedBox(height: 10),
 
@@ -234,8 +235,8 @@ class _AddProductPageState extends State<AddProductPage> {
                     Navigator.pushReplacementNamed(context, 'AddProductPage');
                   },
                   widget: textOfCustomButton(text: 'Clear All'),
-                  color: KPrimayColor,
-                  borderColor: KPrimayColor,
+                  color: Theme.of(context).primaryColor,
+                  borderColor: Theme.of(context).primaryColor,
                 ),
               ],
             ),

@@ -30,8 +30,6 @@ class TFForAddProduct extends StatefulWidget {
 class _TFForAddProductState extends State<TFForAddProduct> {
   bool? foucs;
   Color color = Colors.grey;
-  final noErrorFoucsColor = KPrimayColor;
-  final noErrornoFoucsColor = Colors.grey;
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +37,7 @@ class _TFForAddProductState extends State<TFForAddProduct> {
       onFocusChange: (foucsed) {
         foucs = foucsed;
         if (foucsed) {
-          color = KPrimayColor;
+          color = Theme.of(context).buttonTheme.colorScheme!.scrim;
         } else {
           color = Colors.grey;
         }
@@ -71,8 +69,9 @@ class _TFForAddProductState extends State<TFForAddProduct> {
 class CustomCheckbox extends StatefulWidget {
   final bool initialValue;
   final ValueChanged<bool> onChanged;
+  final Color activeColor;
 
-  const CustomCheckbox({Key? key, required this.initialValue, required this.onChanged}) : super(key: key);
+  const CustomCheckbox({Key? key, required this.initialValue, required this.onChanged, required this.activeColor}) : super(key: key);
 
   @override
   _CustomCheckboxState createState() => _CustomCheckboxState();
@@ -91,7 +90,7 @@ class _CustomCheckboxState extends State<CustomCheckbox> {
   Widget build(BuildContext context) {
     return Checkbox(
       value: isChecked,
-      activeColor: KPrimayColor,
+      activeColor: widget.activeColor,
       onChanged: (bool? value) {
         setState(() {
           isChecked = value!;
@@ -217,12 +216,10 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
 // ignore: must_be_immutable
 class CustomDropdownButton extends StatefulWidget {
   CustomDropdownButton({super.key, required this.thingsToDisplay, required this.initialText, this.enabled = true, required this.onSelected});
-
   String? initialText;
   final List<String> thingsToDisplay;
   final bool enabled;
   void Function(String? value) onSelected;
-
   @override
   State<CustomDropdownButton> createState() => _CustomDropdownButtonState();
 }
@@ -231,10 +228,22 @@ class _CustomDropdownButtonState extends State<CustomDropdownButton> {
   @override
   Widget build(BuildContext context) {
     return DropdownMenu<String>(
-      menuHeight: MediaQuery.of(context).size.height - 50,
+      menuHeight: MediaQuery.of(context).size.height - 40,
+      menuStyle: const MenuStyle(alignment: Alignment.topLeft),
       enabled: widget.enabled,
       initialSelection: widget.initialText,
-      dropdownMenuEntries: widget.thingsToDisplay.map<DropdownMenuEntry<String>>((value) => DropdownMenuEntry(value: value, label: value)).toList(),
+      dropdownMenuEntries: widget.thingsToDisplay
+          .map<DropdownMenuEntry<String>>(
+            (value) => DropdownMenuEntry(
+              value: value,
+              label: value,
+              style: ButtonStyle(
+                textStyle: MaterialStateProperty.all(const TextStyle(fontSize: 17)),
+                side: MaterialStateProperty.all(const BorderSide(width: .25)),
+              ),
+            ),
+          )
+          .toList(),
       width: widthOfCustoms(context),
       textStyle: const TextStyle(fontSize: 18),
       onSelected: (value) {
@@ -263,45 +272,51 @@ class ChooseAndShowCompatibleDevices extends StatefulWidget {
 class _ChooseAndShowCompatibleDevicesState extends State<ChooseAndShowCompatibleDevices> {
   @override
   Widget build(BuildContext context) {
+    widget.product.compatibility ??= {};
     return Column(
       children: [
         CustomDropdownButton(
           initialText: widget.allCompatibleDevices.first,
           thingsToDisplay: widget.allCompatibleDevices.toList(),
           onSelected: (value) {
-            widget.product.compatibility ??= {};
             widget.product.compatibility!.add(value);
             setState(() {});
           },
         ),
         const SizedBox(height: 5),
-        Container(
-          width: double.infinity,
-          height: 200,
-          decoration: BoxDecoration(borderRadius: KRadius, border: Border.all(color: Colors.grey)),
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: KHorizontalPadding),
-            child: Column(
-              children: widget.product.compatibility != null
-                  ? widget.product.compatibility!.map((e) {
-                      return Card(
-                        margin: const EdgeInsets.symmetric(vertical: 8),
-                        shape: RoundedRectangleBorder(side: const BorderSide(width: 2, color: KPrimayColor), borderRadius: KRadius),
-                        child: ListTile(
-                          title: Text(e, style: const TextStyle(fontSize: 22)),
-                          trailing: IconButton(
+        Builder(builder: (context) {
+          return Container(
+            width: double.infinity,
+            height: 200,
+            decoration: BoxDecoration(borderRadius: KRadius, border: Border.all(color: Colors.grey)),
+            child: widget.product.compatibility!.isNotEmpty
+                ? SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    padding: const EdgeInsets.symmetric(horizontal: KHorizontalPadding),
+                    child: Column(
+                      children: widget.product.compatibility!.map((e) {
+                        return Card(
+                          margin: const EdgeInsets.symmetric(vertical: 8),
+                          shape: RoundedRectangleBorder(side: BorderSide(width: 2, color: Theme.of(context).buttonTheme.colorScheme!.outline), borderRadius: KRadius),
+                          child: ListTile(
+                            shape: RoundedRectangleBorder(side: BorderSide(width: 0, color: Theme.of(context).buttonTheme.colorScheme!.outline), borderRadius: KRadius),
+                            title: Text(e, style: const TextStyle(fontSize: 22)),
+                            tileColor: Theme.of(context).buttonTheme.colorScheme!.background,
+                            trailing: IconButton(
                               onPressed: () {
                                 widget.product.compatibility!.remove(e);
                                 setState(() {});
                               },
-                              icon: const Icon(Icons.clear)),
-                        ),
-                      );
-                    }).toList()
-                  : <Widget>[],
-            ),
-          ),
-        ),
+                              icon: Icon(Icons.clear, color: Theme.of(context).textTheme.bodyLarge!.color),
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  )
+                : Center(child: Text('No devices selected', style: TextStyle(color: Theme.of(context).textTheme.bodyLarge!.color, fontSize: 22))),
+          );
+        }),
       ],
     );
   }
@@ -387,7 +402,7 @@ void showSnackBar(BuildContext context, String message) {
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
       content: Text(message, style: const TextStyle(fontSize: 17, color: Colors.white)),
-      backgroundColor: KPrimayColor,
+      backgroundColor: Theme.of(context).primaryColor,
       duration: const Duration(seconds: 2),
     ),
   );

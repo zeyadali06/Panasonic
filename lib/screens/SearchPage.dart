@@ -32,11 +32,11 @@ class _SearchPageState extends State<SearchPage> {
               Navigator.pushNamed(context, 'AddProductPage');
             },
             shape: RoundedRectangleBorder(borderRadius: KRadius),
-            color: KPrimayColor,
+            color: Theme.of(context).primaryColor,
             child: const Text('New Device', style: TextStyle(color: Colors.white), textAlign: TextAlign.center),
           ),
         ),
-        appBar: AppBar(backgroundColor: KPrimayColor),
+        appBar: AppBar(backgroundColor: Theme.of(context).appBarTheme.backgroundColor),
         body: Column(
           children: [
             // Search
@@ -78,8 +78,8 @@ class _SearchPageState extends State<SearchPage> {
                                       Navigator.pushNamed(context, 'AddProductPage');
                                     },
                                     widget: Text(data['model'], style: const TextStyle(fontSize: 22)),
-                                    color: Colors.white,
-                                    borderColor: KPrimayColor,
+                                    color: Theme.of(context).buttonTheme.colorScheme!.background,
+                                    borderColor: Theme.of(context).buttonTheme.colorScheme!.outline,
                                   ),
                                 ),
                               ],

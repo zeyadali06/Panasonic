@@ -1,6 +1,5 @@
 // ignore_for_file: file_names
 import 'package:flutter/material.dart';
-import 'package:panasonic/constants.dart';
 import 'package:panasonic/screens/MyAccountPage.dart';
 import 'package:panasonic/screens/MyProductsPage.dart';
 import 'package:panasonic/screens/SearchPage.dart';
@@ -46,16 +45,16 @@ class _HomeNavigationBarState extends State<HomeNavigationBar> {
         child: pages[selectedIndex],
       ),
       bottomNavigationBar: BottomNavigationBar(
-        unselectedItemColor: const Color.fromRGBO(53, 53, 53, 1),
-        // backgroundColor: Global.dark ? NavbarColor : const Color.fromRGBO(227, 227, 227, 1),
-        showUnselectedLabels: false,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: 'My Products'),
           BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
           BottomNavigationBarItem(icon: Icon(Icons.person_outlined), label: 'Account'),
         ],
+        showUnselectedLabels: false,
         currentIndex: selectedIndex,
-        selectedItemColor: KPrimayColor,
+        backgroundColor: Theme.of(context).bottomNavigationBarTheme.backgroundColor,
+        selectedItemColor: Theme.of(context).bottomNavigationBarTheme.selectedItemColor,
+        unselectedItemColor: Theme.of(context).bottomNavigationBarTheme.unselectedItemColor,
         onTap: _onItemTapped,
       ),
     );
