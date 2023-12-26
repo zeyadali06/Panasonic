@@ -23,7 +23,9 @@ class SignIn {
   static Future<UserCredential> signInWithUid(String uid) async {
     return await FirebaseAuth.instance.signInWithCredential(EmailAuthProvider.credential(email: '', password: ''));
   }
+}
 
+class GetAccountData {
   static Future<String?> getUsernameFromFirestore(String uid) async {
     var d = await FirebaseFirestore.instance.collection(usernameCollection).doc(uid).get();
     return d.data()!['username'];
@@ -50,6 +52,18 @@ class Register {
     UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
     await FirebaseFirestore.instance.collection(usernameCollection).doc(userCredential.user!.uid).set({'email': email, 'username': username, 'phone': phone}, SetOptions(merge: true));
     return userCredential;
+  }
+}
+
+class SignOut {
+  static Future<void> signOut() async {
+    await FirebaseAuth.instance.signOut();
+  }
+
+  static Future<void> deleteAccount(String uid, String email) async {
+    await FirebaseFirestore.instance.collection(usernameCollection).doc(uid).delete();
+    await FirebaseFirestore.instance.collection(usersCollection).doc(email).delete();
+    await FirebaseAuth.instance.currentUser!.delete();
   }
 }
 

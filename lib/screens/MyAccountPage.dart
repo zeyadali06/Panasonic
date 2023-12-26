@@ -1,11 +1,12 @@
 // ignore_for_file: file_names
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:panasonic/components/helper.dart';
 import 'package:panasonic/constants.dart';
 import 'package:panasonic/main.dart';
 import 'package:provider/provider.dart';
+import 'package:panasonic/services/SignInAndRegister.dart';
 
 class MyAccountPage extends StatefulWidget {
   const MyAccountPage({super.key, required this.refresh});
@@ -159,22 +160,52 @@ class _MyAccountPageState extends State<MyAccountPage> {
             ),
 
             // Logout Button
-            MaterialButton(
-              onPressed: () async {
-                setState(() {
-                  isLoading = true;
-                });
-                await FirebaseAuth.instance.signOut();
-                Provider.of<ProviderVariables>(context, listen: false).product = null;
-                Provider.of<ProviderVariables>(context, listen: false).email = null;
-                Provider.of<ProviderVariables>(context, listen: false).username = null;
-                Navigator.pushReplacementNamed(context, 'LoginPage');
-              },
-              height: 50,
-              minWidth: 140,
-              shape: RoundedRectangleBorder(borderRadius: KRadius, side: BorderSide(color: Theme.of(context).primaryColor)),
-              color: Theme.of(context).primaryColor,
-              child: const Text("Logout", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                // Logout Button
+                MaterialButton(
+                  onPressed: () async {
+                    setState(() {
+                      isLoading = true;
+                    });
+                    await SignOut.signOut();
+                    Provider.of<ProviderVariables>(context, listen: false).product = null;
+                    Provider.of<ProviderVariables>(context, listen: false).email = null;
+                    Provider.of<ProviderVariables>(context, listen: false).username = null;
+                    Navigator.pushReplacementNamed(context, 'LoginPage');
+                  },
+                  height: 50,
+                  minWidth: 170,
+                  shape: RoundedRectangleBorder(borderRadius: KRadius),
+                  color: Theme.of(context).primaryColor,
+                  child: const Text("Logout", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+                ),
+
+                // Delete Account Button
+                MaterialButton(
+                  onPressed: () async {
+                    setState(() {
+                      isLoading = true;
+                    });
+
+                    var uidDocument =
+                        await FirebaseFirestore.instance.collection(usernameCollection).where('username', isEqualTo: Provider.of<ProviderVariables>(context, listen: false).username).limit(1).get();
+                    await SignOut.deleteAccount(uidDocument.docs[0].id, Provider.of<ProviderVariables>(context, listen: false).email!);
+
+                    Provider.of<ProviderVariables>(context, listen: false).dark = false;
+                    Provider.of<ProviderVariables>(context, listen: false).email = null;
+                    Provider.of<ProviderVariables>(context, listen: false).username = null;
+                    Provider.of<ProviderVariables>(context, listen: false).product = null;
+                    Navigator.pushReplacementNamed(context, 'LoginPage');
+                  },
+                  height: 50,
+                  minWidth: 170,
+                  shape: RoundedRectangleBorder(borderRadius: KRadius),
+                  color: Colors.red,
+                  child: const Text('Delete Account', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+                )
+              ],
             ),
           ],
         ),

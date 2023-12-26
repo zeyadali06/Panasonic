@@ -168,11 +168,11 @@ Future<void> loginNormally(BuildContext context, String emailOrUsername, String 
     if (email == null) {
       var uidDocument = await FirebaseFirestore.instance.collection(usernameCollection).where('username', isEqualTo: username).limit(1).get();
       uidDocument.docs.isEmpty ? throw FirebaseAuthException(code: 'username-not-found') : null;
-      email = await SignIn.getEmailFromFirestore(uidDocument.docs[0].id);
+      email = await GetAccountData.getEmailFromFirestore(uidDocument.docs[0].id);
       await SignIn.signIn(email!, password);
     } else if (username == null) {
       UserCredential user = await SignIn.signIn(email, password);
-      username = await SignIn.getUsernameFromFirestore(user.user!.uid);
+      username = await GetAccountData.getUsernameFromFirestore(user.user!.uid);
     }
 
     Provider.of<ProviderVariables>(context, listen: false).email = email;
