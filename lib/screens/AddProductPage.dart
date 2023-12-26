@@ -37,6 +37,8 @@ class _AddProductPageState extends State<AddProductPage> {
         ? ProductModel(model: '', description: '', category: '', used: false)
         : Provider.of<ProviderVariables>(context, listen: false).product!;
 
+    product.category = 'Air Conditioning';
+
     if (product.model != '') {
       modelController.text = product.model;
     }
