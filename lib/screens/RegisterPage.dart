@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lottie/lottie.dart';
 import 'package:panasonic/components/helper.dart';
-import 'package:panasonic/services/SignInAndRegister.dart';
+import 'package:panasonic/services/Registration.dart';
 import 'package:panasonic/constants.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:panasonic/main.dart';

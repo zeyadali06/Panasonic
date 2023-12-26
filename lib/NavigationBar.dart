@@ -1,8 +1,10 @@
 // ignore_for_file: file_names
 import 'package:flutter/material.dart';
+import 'package:panasonic/main.dart';
 import 'package:panasonic/screens/MyAccountPage.dart';
 import 'package:panasonic/screens/MyProductsPage.dart';
 import 'package:panasonic/screens/SearchPage.dart';
+import 'package:provider/provider.dart';
 
 class HomeNavigationBar extends StatefulWidget {
   const HomeNavigationBar({super.key});

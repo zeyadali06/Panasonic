@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-import 'package:panasonic/services/SignInAndRegister.dart';
+import 'package:panasonic/services/Registration.dart';
 import 'package:panasonic/components/helper.dart';
 import 'package:panasonic/constants.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
@@ -158,6 +158,7 @@ Future<void> loginNormally(BuildContext context, String emailOrUsername, String 
   try {
     String? email;
     String? username;
+    bool dark = false;
 
     if (emailOrUsername.contains('@')) {
       email = emailOrUsername;
@@ -167,16 +168,23 @@ Future<void> loginNormally(BuildContext context, String emailOrUsername, String 
 
     if (email == null) {
       var uidDocument = await FirebaseFirestore.instance.collection(usernameCollection).where('username', isEqualTo: username).limit(1).get();
+      dark = uidDocument.docs[0].data()['dark'];
       uidDocument.docs.isEmpty ? throw FirebaseAuthException(code: 'username-not-found') : null;
       email = await GetAccountData.getEmailFromFirestore(uidDocument.docs[0].id);
       await SignIn.signIn(email!, password);
     } else if (username == null) {
       UserCredential user = await SignIn.signIn(email, password);
       username = await GetAccountData.getUsernameFromFirestore(user.user!.uid);
+      var data = await FirebaseFirestore.instance.collection(usernameCollection).doc(user.user!.uid).get();
+      dark = data.data()!['dark'];
     }
+
+    print(dark);
 
     Provider.of<ProviderVariables>(context, listen: false).email = email;
     Provider.of<ProviderVariables>(context, listen: false).username = username;
+    Provider.of<ProviderVariables>(context, listen: false).dark = dark;
+
     Navigator.pushReplacementNamed(context, 'HomeNavigationBar');
   } on FirebaseAuthException catch (exc) {
     if (exc.code == 'user-not-found') {

@@ -6,7 +6,7 @@ import 'package:panasonic/components/helper.dart';
 import 'package:panasonic/constants.dart';
 import 'package:panasonic/main.dart';
 import 'package:provider/provider.dart';
-import 'package:panasonic/services/SignInAndRegister.dart';
+import 'package:panasonic/services/Registration.dart';
 
 class MyAccountPage extends StatefulWidget {
   const MyAccountPage({super.key, required this.refresh});
@@ -159,7 +159,6 @@ class _MyAccountPageState extends State<MyAccountPage> {
               ],
             ),
 
-            // Logout Button
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -170,6 +169,11 @@ class _MyAccountPageState extends State<MyAccountPage> {
                       isLoading = true;
                     });
                     await SignOut.signOut();
+
+                    String? uid = await GetAccountData.getUID(Provider.of<ProviderVariables>(context, listen: false).username!);
+                    FirebaseFirestore.instance.collection(usernameCollection).doc(uid).update({'dark': Provider.of<ProviderVariables>(context, listen: false).dark});
+
+                    Provider.of<ProviderVariables>(context, listen: false).dark = false;
                     Provider.of<ProviderVariables>(context, listen: false).product = null;
                     Provider.of<ProviderVariables>(context, listen: false).email = null;
                     Provider.of<ProviderVariables>(context, listen: false).username = null;
