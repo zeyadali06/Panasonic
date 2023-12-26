@@ -251,7 +251,7 @@ class _AddProductPageState extends State<AddProductPage> {
 
 Future<void> sendProductToFireStore(BuildContext context, ProductModel product) async {
   try {
-    await addProductToAccount(product: product, email: Provider.of<ProviderVariables>(context, listen: false).email!);
+    await addProductToAccount(product: product, email: Provider.of<ProviderVariables>(context, listen: false).data.email!);
     await addProduct(
       product: ProductModel(
         model: product.model,

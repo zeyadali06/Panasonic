@@ -211,7 +211,7 @@ class _EditOrDeleteProductPageState extends State<EditOrDeleteProductPage> {
 
 Future<void> sendEditedProductToFireStore(BuildContext context, ProductModel product) async {
   try {
-    await addProductToAccount(product: product, email: Provider.of<ProviderVariables>(context, listen: false).email!);
+    await addProductToAccount(product: product, email: Provider.of<ProviderVariables>(context, listen: false).data.email!);
     showSnackBar(context, 'Product Added Successfully');
     Provider.of<ProviderVariables>(context, listen: false).product = null;
     Navigator.pop(context);

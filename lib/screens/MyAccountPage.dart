@@ -69,14 +69,14 @@ class _MyAccountPageState extends State<MyAccountPage> {
 
                 // Username
                 Text(
-                  '${Provider.of<ProviderVariables>(context, listen: false).username}',
+                  '${Provider.of<ProviderVariables>(context, listen: false).data.username}',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30, color: Theme.of(context).textTheme.bodyLarge!.color),
                 ),
                 const SizedBox(height: 6),
 
                 // Email
                 Text(
-                  '${Provider.of<ProviderVariables>(context, listen: false).email}',
+                  '${Provider.of<ProviderVariables>(context, listen: false).data.email}',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Theme.of(context).textTheme.bodyLarge!.color),
                 ),
                 const SizedBox(height: 25),
@@ -130,7 +130,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
                 ),
                 const SizedBox(height: 10),
 
-                // Theme
+                // Dark Theme
                 GestureDetector(
                   onTap: () {},
                   child: ListTile(
@@ -151,6 +151,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
                         onChanged: (value) {
                           isChecked = value;
                           Provider.of<ProviderVariables>(context, listen: false).dark = value;
+                          setState(() {});
                         },
                       ),
                     ),
@@ -170,13 +171,12 @@ class _MyAccountPageState extends State<MyAccountPage> {
                     });
                     await SignOut.signOut();
 
-                    String? uid = await GetAccountData.getUID(Provider.of<ProviderVariables>(context, listen: false).username!);
+                    String? uid = await GetAccountData.getUID(Provider.of<ProviderVariables>(context, listen: false).data.username!);
                     FirebaseFirestore.instance.collection(usernameCollection).doc(uid).update({'dark': Provider.of<ProviderVariables>(context, listen: false).dark});
 
                     Provider.of<ProviderVariables>(context, listen: false).dark = false;
+                    Provider.of<ProviderVariables>(context, listen: false).data.setnull();
                     Provider.of<ProviderVariables>(context, listen: false).product = null;
-                    Provider.of<ProviderVariables>(context, listen: false).email = null;
-                    Provider.of<ProviderVariables>(context, listen: false).username = null;
                     Navigator.pushReplacementNamed(context, 'LoginPage');
                   },
                   height: 50,
@@ -193,13 +193,15 @@ class _MyAccountPageState extends State<MyAccountPage> {
                       isLoading = true;
                     });
 
-                    var uidDocument =
-                        await FirebaseFirestore.instance.collection(usernameCollection).where('username', isEqualTo: Provider.of<ProviderVariables>(context, listen: false).username).limit(1).get();
-                    await SignOut.deleteAccount(uidDocument.docs[0].id, Provider.of<ProviderVariables>(context, listen: false).email!);
+                    var uidDocument = await FirebaseFirestore.instance
+                        .collection(usernameCollection)
+                        .where('username', isEqualTo: Provider.of<ProviderVariables>(context, listen: false).data.username)
+                        .limit(1)
+                        .get();
+                    await SignOut.deleteAccount(uidDocument.docs[0].id, Provider.of<ProviderVariables>(context, listen: false).data.email!);
 
                     Provider.of<ProviderVariables>(context, listen: false).dark = false;
-                    Provider.of<ProviderVariables>(context, listen: false).email = null;
-                    Provider.of<ProviderVariables>(context, listen: false).username = null;
+                    Provider.of<ProviderVariables>(context, listen: false).data.setnull();
                     Provider.of<ProviderVariables>(context, listen: false).product = null;
                     Navigator.pushReplacementNamed(context, 'LoginPage');
                   },

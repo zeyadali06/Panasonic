@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lottie/lottie.dart';
 import 'package:panasonic/components/helper.dart';
+import 'package:panasonic/models/AccountDataModel.dart';
 import 'package:panasonic/services/Registration.dart';
 import 'package:panasonic/constants.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
@@ -206,7 +207,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         });
                         try {
                           UserCredential user = await SignIn.signInWithGoogle();
-                          Provider.of<ProviderVariables>(context, listen: false).email = user.user!.email;
+                          Provider.of<ProviderVariables>(context, listen: false).data.email = user.user!.email!;
                           Navigator.pushReplacementNamed(context, 'HomeNavigationBar');
                         } catch (exc) {
                           showSnackBar(context, 'Error');
@@ -235,9 +236,18 @@ Future<void> registerNormally(BuildContext context, String email, String usernam
     usernameChecker.docs.isNotEmpty ? throw FirebaseAuthException(code: 'username-already-in-use') : null;
     password != confirmPassword ? throw FirebaseAuthException(code: 'wrong-confirmation') : null;
 
-    await Register.register(email, username, phone, password);
-    Provider.of<ProviderVariables>(context, listen: false).email = email;
-    Provider.of<ProviderVariables>(context, listen: false).username = username;
+    UserCredential user = await Register.register(email, username, phone, password);
+
+    AccountData data = AccountData(
+      email: email,
+      username: username,
+      phone: int.parse(phone),
+      uid: user.user!.uid,
+      dark: false,
+    );
+
+    Provider.of<ProviderVariables>(context, listen: false).data = data;
+    Provider.of<ProviderVariables>(context, listen: false).dark = false;
     Navigator.pushReplacementNamed(context, 'HomeNavigationBar');
   } on FirebaseAuthException catch (exc) {
     if (exc.code == 'weak-password') {

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:panasonic/NavigationBar.dart';
 import 'package:panasonic/constants.dart';
 import 'package:panasonic/firebase_options.dart';
+import 'package:panasonic/models/AccountDataModel.dart';
 import 'package:panasonic/models/ProductModel.dart';
 import 'package:panasonic/screens/AddProductPage.dart';
 import 'package:panasonic/screens/EditOrDeleteProductPage.dart';
@@ -72,11 +73,12 @@ class MyApp extends StatelessWidget {
 }
 
 class ProviderVariables extends ChangeNotifier {
-  String? email;
-  String? username;
-
   ProductModel? product;
 
+  late AccountData data;
+
+  // String? email;
+  // String? username;
   bool _dark = false;
   bool get dark => _dark;
   set dark(bool dark) {

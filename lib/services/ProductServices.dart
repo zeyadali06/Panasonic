@@ -116,5 +116,5 @@ Future<void> deleteProduct(ProductModel pm, BuildContext context) async {
   final updates = <String, dynamic>{
     '${pm.model}${pm.used ? 't' : 'f'}': FieldValue.delete(),
   };
-  await FirebaseFirestore.instance.collection(usersCollection).doc(Provider.of<ProviderVariables>(context, listen: false).email).update(updates);
+  await FirebaseFirestore.instance.collection(usersCollection).doc(Provider.of<ProviderVariables>(context, listen: false).data.email).update(updates);
 }

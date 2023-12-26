@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:panasonic/models/AccountDataModel.dart';
 import 'package:panasonic/services/Registration.dart';
 import 'package:panasonic/components/helper.dart';
 import 'package:panasonic/constants.dart';
@@ -131,7 +132,15 @@ class _LoginPageState extends State<LoginPage> {
                         });
                         try {
                           UserCredential user = await SignIn.signInWithGoogle();
-                          Provider.of<ProviderVariables>(context, listen: false).email = user.user!.email;
+                          AccountData data = AccountData(
+                            email: user.user!.email,
+                            username: null,
+                            phone: null,
+                            uid: user.user!.uid,
+                            dark: false,
+                          );
+                          Provider.of<ProviderVariables>(context, listen: false).dark = false;
+                          Provider.of<ProviderVariables>(context, listen: false).data = data;
                           Navigator.pushReplacementNamed(context, 'HomeNavigationBar');
                         } catch (exc) {
                           showSnackBar(context, 'Error');
@@ -158,6 +167,8 @@ Future<void> loginNormally(BuildContext context, String emailOrUsername, String 
   try {
     String? email;
     String? username;
+    String? uid;
+    int? phone;
     bool dark = false;
 
     if (emailOrUsername.contains('@')) {
@@ -169,22 +180,30 @@ Future<void> loginNormally(BuildContext context, String emailOrUsername, String 
     if (email == null) {
       var uidDocument = await FirebaseFirestore.instance.collection(usernameCollection).where('username', isEqualTo: username).limit(1).get();
       dark = uidDocument.docs[0].data()['dark'];
+      phone = int.parse(uidDocument.docs[0].data()['phone']);
+      uid = uidDocument.docs[0].id;
       uidDocument.docs.isEmpty ? throw FirebaseAuthException(code: 'username-not-found') : null;
       email = await GetAccountData.getEmailFromFirestore(uidDocument.docs[0].id);
       await SignIn.signIn(email!, password);
     } else if (username == null) {
       UserCredential user = await SignIn.signIn(email, password);
       username = await GetAccountData.getUsernameFromFirestore(user.user!.uid);
+      uid = user.user!.uid;
       var data = await FirebaseFirestore.instance.collection(usernameCollection).doc(user.user!.uid).get();
       dark = data.data()!['dark'];
+      phone = int.parse(data.data()!['phone']);
     }
 
-    print(dark);
+    AccountData data = AccountData(
+      email: email,
+      username: username,
+      phone: phone,
+      uid: uid,
+      dark: dark,
+    );
 
-    Provider.of<ProviderVariables>(context, listen: false).email = email;
-    Provider.of<ProviderVariables>(context, listen: false).username = username;
     Provider.of<ProviderVariables>(context, listen: false).dark = dark;
-
+    Provider.of<ProviderVariables>(context, listen: false).data = data;
     Navigator.pushReplacementNamed(context, 'HomeNavigationBar');
   } on FirebaseAuthException catch (exc) {
     if (exc.code == 'user-not-found') {

@@ -128,7 +128,7 @@ List<Map<bool, ProductModel>> getProductsData(BuildContext context, AsyncSnapsho
 
   Map<String, dynamic> data = snapshot.data!.docs
       .where((element) {
-        if (element.id == Provider.of<ProviderVariables>(context, listen: false).email) {
+        if (element.id == Provider.of<ProviderVariables>(context, listen: false).data.email) {
           return true;
         } else {
           return false;
