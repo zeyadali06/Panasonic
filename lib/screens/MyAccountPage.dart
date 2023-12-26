@@ -148,10 +148,21 @@ class _MyAccountPageState extends State<MyAccountPage> {
                       child: CustomCheckbox(
                         activeColor: Theme.of(context).checkboxTheme.overlayColor!.resolve({})!,
                         initialValue: Provider.of<ProviderVariables>(context).dark,
-                        onChanged: (value) {
+                        onChanged: (value) async {
                           isChecked = value;
+
                           Provider.of<ProviderVariables>(context, listen: false).dark = value;
-                          setState(() {});
+                          setState(() {
+                            isLoading = true;
+                          });
+                          await FirebaseFirestore.instance
+                              .collection(usernameCollection)
+                              .doc(Provider.of<ProviderVariables>(context, listen: false).data.uid)
+                              .update({'dark': Provider.of<ProviderVariables>(context, listen: false).dark});
+
+                          setState(() {
+                            isLoading = false;
+                          });
                         },
                       ),
                     ),
