@@ -7,6 +7,7 @@ import 'package:panasonic/firebase_options.dart';
 import 'package:panasonic/models/AccountDataModel.dart';
 import 'package:panasonic/models/ProductModel.dart';
 import 'package:panasonic/screens/AddProductPage.dart';
+import 'package:panasonic/screens/CompleteRegister.dart';
 import 'package:panasonic/screens/EditOrDeleteProductPage.dart';
 import 'package:panasonic/screens/SearchPage.dart';
 import 'package:panasonic/screens/SplachScreen.dart';
@@ -60,6 +61,7 @@ class MyApp extends StatelessWidget {
       routes: {
         'SplachScreen': (context) => const SplachScreen(),
         'RegisterPage': (context) => const RegisterPage(),
+        'CompleteRegisterPage': (context) => const CompleteRegisterPage(),
         'LoginPage': (context) => const LoginPage(),
         'MyProductsPage': (context) => const MyProductsPage(),
         'SearchPage': (context) => const SearchPage(),

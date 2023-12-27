@@ -113,11 +113,12 @@ class UpperCaseTextFormatter extends TextInputFormatter {
 
 // ignore: must_be_immutable
 class CustomTextFormField extends StatefulWidget {
-  CustomTextFormField({super.key, required this.hintText, required this.onChanged, required this.label, this.prefixIcon, this.obscureText = false, this.inputFormatters});
+  CustomTextFormField({super.key, required this.hintText, required this.onChanged, required this.onSaved, required this.label, this.prefixIcon, this.obscureText = false, this.inputFormatters});
 
   final String hintText;
   final String label;
   final void Function(String data)? onChanged;
+  final void Function(String? data)? onSaved;
   List<TextInputFormatter>? inputFormatters;
 
   final IconData? prefixIcon;
@@ -176,6 +177,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
           }
           return null;
         },
+        onSaved: widget.onSaved,
         cursorOpacityAnimates: true,
         cursorColor: color,
         obscureText: show!,

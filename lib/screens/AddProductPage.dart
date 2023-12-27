@@ -260,7 +260,7 @@ Future<void> sendProductToFireStore(BuildContext context, ProductModel product) 
         used: false,
       ),
     );
-    print(product.toString());
+
     showSnackBar(context, 'Product Added Successfully');
     Provider.of<ProviderVariables>(context, listen: false).product = null;
     Navigator.pop(context);

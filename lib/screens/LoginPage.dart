@@ -61,6 +61,7 @@ class _LoginPageState extends State<LoginPage> {
                           prefixIcon: Icons.email,
                           label: 'Email or Username',
                           hintText: 'Enter Your Email or Username',
+                          onSaved: (value) {},
                           onChanged: (data) {
                             deviceKey.currentState!.validate();
                             emailOrUsername = data;
@@ -81,6 +82,7 @@ class _LoginPageState extends State<LoginPage> {
                           prefixIcon: Icons.lock_outlined,
                           label: 'Password',
                           hintText: 'Enter Your Password',
+                          onSaved: (value) {},
                           obscureText: true,
                           onChanged: (data) {
                             descriptionKey.currentState!.validate();
@@ -132,21 +134,34 @@ class _LoginPageState extends State<LoginPage> {
                         });
                         try {
                           UserCredential user = await SignIn.signInWithGoogle();
+
+                          var getData = await FirebaseFirestore.instance.collection(usernameCollection).where('uid', isEqualTo: user.user!.uid).limit(1).get();
+
+                          if (getData.docs.isEmpty) {
+                            throw FirebaseAuthException(code: 'user-not-found');
+                          }
+
                           AccountData data = AccountData(
                             email: user.user!.email,
-                            username: null,
-                            phone: null,
+                            username: getData.docs[0]['username'],
+                            phone: getData.docs[0]['phone'],
                             uid: user.user!.uid,
-                            dark: false,
+                            dark: getData.docs[0]['dark'],
                           );
-                          Provider.of<ProviderVariables>(context, listen: false).dark = false;
+
+                          Provider.of<ProviderVariables>(context, listen: false).dark = getData.docs[0]['dark'];
                           Provider.of<ProviderVariables>(context, listen: false).data = data;
                           Navigator.pushReplacementNamed(context, 'HomeNavigationBar');
+                        } on FirebaseAuthException catch (exc) {
+                          if (exc.code == 'user-not-found') {
+                            await FirebaseAuth.instance.currentUser!.delete();
+                            showSnackBar(context, 'Email not found');
+                          }
                         } catch (exc) {
                           showSnackBar(context, 'Error');
                         }
                         setState(() {
-                          isLoading = true;
+                          isLoading = false;
                         });
                       },
                       text: 'Sign-In with Google',
@@ -178,20 +193,20 @@ Future<void> loginNormally(BuildContext context, String emailOrUsername, String 
     }
 
     if (email == null) {
-      var uidDocument = await FirebaseFirestore.instance.collection(usernameCollection).where('username', isEqualTo: username).limit(1).get();
-      dark = uidDocument.docs[0].data()['dark'];
-      phone = int.parse(uidDocument.docs[0].data()['phone']);
-      uid = uidDocument.docs[0].id;
-      uidDocument.docs.isEmpty ? throw FirebaseAuthException(code: 'username-not-found') : null;
-      email = await GetAccountData.getEmailFromFirestore(uidDocument.docs[0].id);
+      var data = await FirebaseFirestore.instance.collection(usernameCollection).where('username', isEqualTo: username).limit(1).get();
+      data.docs.isEmpty ? throw FirebaseAuthException(code: 'username-not-found') : null;
+      dark = data.docs[0].data()['dark'];
+      phone = data.docs[0].data()['phone'];
+      uid = data.docs[0].id;
+      email = await GetAccountData.getEmailFromFirestore(data.docs[0].id);
       await SignIn.signIn(email!, password);
     } else if (username == null) {
       UserCredential user = await SignIn.signIn(email, password);
       username = await GetAccountData.getUsernameFromFirestore(user.user!.uid);
-      uid = user.user!.uid;
       var data = await FirebaseFirestore.instance.collection(usernameCollection).doc(user.user!.uid).get();
+      uid = user.user!.uid;
       dark = data.data()!['dark'];
-      phone = int.parse(data.data()!['phone']);
+      phone = data.data()!['phone'];
     }
 
     AccountData data = AccountData(
@@ -219,11 +234,9 @@ Future<void> loginNormally(BuildContext context, String emailOrUsername, String 
     } else if (exc.code == 'too-many-requests') {
       showSnackBar(context, 'Too many attempts, Try again later');
     } else {
-      print(exc);
       showSnackBar(context, 'Error');
     }
   } catch (exc) {
-    print(exc);
     showSnackBar(context, 'Error');
   }
 }

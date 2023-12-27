@@ -24,12 +24,23 @@ class AccountData {
       dark: data['dark'] as bool,
     );
   }
+
   void setnull() {
     email = null;
     username = null;
     uid = null;
     phone = null;
     dark = false;
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'email': email,
+      'username': username,
+      'phone': phone,
+      'uid': uid,
+      'dark': dark,
+    };
   }
 
   @override

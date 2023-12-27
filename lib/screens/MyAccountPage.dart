@@ -27,15 +27,15 @@ class _MyAccountPageState extends State<MyAccountPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-        title: const Text("My Account", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-      ),
-      body: ModalProgressHUD(
-        inAsyncCall: isLoading,
-        child: Column(
+    return ModalProgressHUD(
+      inAsyncCall: isLoading,
+      child: Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+          title: const Text("My Account", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+        ),
+        body: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             // Photo
@@ -182,7 +182,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
                     });
                     await SignOut.signOut();
 
-                    String? uid = await GetAccountData.getUID(Provider.of<ProviderVariables>(context, listen: false).data.username!);
+                    String? uid = await GetAccountData.getUID(Provider.of<ProviderVariables>(context, listen: false).data.username!, false);
                     FirebaseFirestore.instance.collection(usernameCollection).doc(uid).update({'dark': Provider.of<ProviderVariables>(context, listen: false).dark});
 
                     Provider.of<ProviderVariables>(context, listen: false).dark = false;

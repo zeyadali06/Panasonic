@@ -46,16 +46,17 @@ class GetAccountData {
     return user?.email;
   }
 
-  static Future<String?> getUID(String username) async {
+  static Future<String?> getUID(String username, bool googleSignIn) async {
     QuerySnapshot uidDocument = await FirebaseFirestore.instance.collection(usernameCollection).where('username', isEqualTo: username).limit(1).get();
     return uidDocument.docs[0].id;
   }
 }
 
 class Register {
-  static Future<UserCredential> register(String email, String username, String phone, String password) async {
-    UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
-    await FirebaseFirestore.instance.collection(usernameCollection).doc(userCredential.user!.uid).set({'email': email, 'username': username, 'phone': phone, 'dark': false}, SetOptions(merge: true));
+  static Future<UserCredential> register(Map<String, dynamic> data, String password) async {
+    UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: data['email'], password: password);
+    data['uid'] = userCredential.user!.uid;
+    await FirebaseFirestore.instance.collection(usernameCollection).doc(userCredential.user!.uid).set(data, SetOptions(merge: true));
     return userCredential;
   }
 }

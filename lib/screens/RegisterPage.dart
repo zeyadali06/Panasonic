@@ -71,6 +71,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           label: 'Username',
                           hintText: 'Enter Your Username',
                           inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z0-9]"))],
+                          onSaved: (value) {},
                           onChanged: (data) {
                             usernameKey.currentState!.validate();
                             username = data.trim();
@@ -91,6 +92,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           prefixIcon: Icons.email,
                           label: 'Email',
                           hintText: 'Enter Your Email',
+                          onSaved: (value) {},
                           onChanged: (data) {
                             emailKey.currentState!.validate();
                             email = data.trim();
@@ -111,6 +113,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           prefixIcon: Icons.phone,
                           label: 'Phone',
                           hintText: 'Enter Your Phone Number',
+                          onSaved: (value) {},
                           onChanged: (data) {
                             phoneKey.currentState!.validate();
                             phone = data.trim();
@@ -132,6 +135,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           label: 'Password',
                           hintText: 'Enter Your Password',
                           obscureText: true,
+                          onSaved: (value) {},
                           onChanged: (data) {
                             passwordKey.currentState!.validate();
                             password = data.trim();
@@ -153,6 +157,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           label: 'Confirm Password',
                           hintText: 'Confirm Your Password',
                           obscureText: true,
+                          onSaved: (value) {},
                           onChanged: (data) {
                             confirmPasswordKey.currentState!.validate();
                             confirmPassword = data.trim();
@@ -207,9 +212,24 @@ class _RegisterPageState extends State<RegisterPage> {
                         });
                         try {
                           UserCredential user = await SignIn.signInWithGoogle();
-                          Provider.of<ProviderVariables>(context, listen: false).data.email = user.user!.email!;
-                          Navigator.pushReplacementNamed(context, 'HomeNavigationBar');
-                        } catch (exc) {
+
+                          var usernameChecker = await FirebaseFirestore.instance.collection(usernameCollection).where('email', isEqualTo: user.user!.email).limit(1).get();
+                          if (usernameChecker.docs.isNotEmpty) {
+                            await SignOut.signOut();
+                            setState(() {
+                              isLoading = false;
+                            });
+                            throw FirebaseAuthException(code: 'email-already-in-use');
+                          }
+                          AccountData data = AccountData(email: user.user!.email, uid: user.user!.uid, dark: false);
+                          Provider.of<ProviderVariables>(context, listen: false).dark = false;
+                          Provider.of<ProviderVariables>(context, listen: false).data = data;
+                          Navigator.pushNamed(context, 'CompleteRegisterPage');
+                        } on FirebaseAuthException catch (exc) {
+                          if (exc.code == 'email-already-in-use') {
+                            showSnackBar(context, 'Email already exist');
+                          }
+                        } catch (_) {
                           showSnackBar(context, 'Error');
                         }
                         setState(() {
@@ -236,15 +256,15 @@ Future<void> registerNormally(BuildContext context, String email, String usernam
     usernameChecker.docs.isNotEmpty ? throw FirebaseAuthException(code: 'username-already-in-use') : null;
     password != confirmPassword ? throw FirebaseAuthException(code: 'wrong-confirmation') : null;
 
-    UserCredential user = await Register.register(email, username, phone, password);
-
     AccountData data = AccountData(
       email: email,
       username: username,
       phone: int.parse(phone),
-      uid: user.user!.uid,
       dark: false,
     );
+
+    UserCredential user = await Register.register(data.toMap(), password);
+    data.uid = user.user!.uid;
 
     Provider.of<ProviderVariables>(context, listen: false).data = data;
     Provider.of<ProviderVariables>(context, listen: false).dark = false;
