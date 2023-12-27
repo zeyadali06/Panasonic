@@ -4,7 +4,7 @@ class AccountData {
   String? email;
   String? username;
   String? uid;
-  int? phone;
+  String? phone;
   bool dark;
 
   AccountData({
@@ -19,7 +19,7 @@ class AccountData {
     return AccountData(
       email: data['email'],
       username: data['username'],
-      phone: data['phone'] as int,
+      phone: data['phone'],
       uid: data['uid'],
       dark: data['dark'] as bool,
     );

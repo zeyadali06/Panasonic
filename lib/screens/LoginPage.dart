@@ -183,7 +183,7 @@ Future<void> loginNormally(BuildContext context, String emailOrUsername, String 
     String? email;
     String? username;
     String? uid;
-    int? phone;
+    String? phone;
     bool dark = false;
 
     if (emailOrUsername.contains('@')) {

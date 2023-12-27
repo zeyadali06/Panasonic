@@ -79,8 +79,6 @@ class ProviderVariables extends ChangeNotifier {
 
   late AccountData data;
 
-  // String? email;
-  // String? username;
   bool _dark = false;
   bool get dark => _dark;
   set dark(bool dark) {

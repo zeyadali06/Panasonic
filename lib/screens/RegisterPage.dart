@@ -259,7 +259,7 @@ Future<void> registerNormally(BuildContext context, String email, String usernam
     AccountData data = AccountData(
       email: email,
       username: username,
-      phone: int.parse(phone),
+      phone: phone,
       dark: false,
     );
 

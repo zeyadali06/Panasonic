@@ -18,7 +18,7 @@ class CompleteRegisterPage extends StatefulWidget {
 
 class _CompleteRegisterPageState extends State<CompleteRegisterPage> {
   late String username;
-  late int phone;
+  late String phone;
   bool isLoading = false;
 
   GlobalKey<FormState> usernameKey = GlobalKey();
@@ -76,7 +76,7 @@ class _CompleteRegisterPageState extends State<CompleteRegisterPage> {
                     label: 'Phone',
                     hintText: 'Phone',
                     onSaved: (value) {
-                      phone = int.parse(value!);
+                      phone = value!;
                     },
                     onChanged: (value) {},
                   ),
