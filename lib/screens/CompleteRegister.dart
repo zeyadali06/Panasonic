@@ -21,9 +21,7 @@ class _CompleteRegisterPageState extends State<CompleteRegisterPage> {
   late String phone;
   bool isLoading = false;
 
-  GlobalKey<FormState> usernameKey = GlobalKey();
-  GlobalKey<FormState> phoneKey = GlobalKey();
-  GlobalKey<FormState> allKey = GlobalKey();
+  GlobalKey<FormState> formKey = GlobalKey();
 
   AutovalidateMode mode = AutovalidateMode.disabled;
 
@@ -37,7 +35,7 @@ class _CompleteRegisterPageState extends State<CompleteRegisterPage> {
           body: SingleChildScrollView(
             padding: const EdgeInsets.all(KHorizontalPadding),
             child: Form(
-              key: allKey,
+              key: formKey,
               autovalidateMode: mode,
               child: Column(
                 children: [
@@ -63,10 +61,10 @@ class _CompleteRegisterPageState extends State<CompleteRegisterPage> {
                     prefixIcon: Icons.person,
                     label: 'Username',
                     hintText: 'Username',
+                    onChanged: (value) {},
                     onSaved: (value) {
                       username = value!;
                     },
-                    onChanged: (value) {},
                   ),
 
                   // Phone
@@ -75,10 +73,10 @@ class _CompleteRegisterPageState extends State<CompleteRegisterPage> {
                     prefixIcon: Icons.phone,
                     label: 'Phone',
                     hintText: 'Phone',
+                    onChanged: (value) {},
                     onSaved: (value) {
                       phone = value!;
                     },
-                    onChanged: (value) {},
                   ),
 
                   // Complete Registeration
@@ -88,8 +86,8 @@ class _CompleteRegisterPageState extends State<CompleteRegisterPage> {
                     borderColor: KPrimayColor,
                     widget: const Text('Complete Registeration', style: TextStyle(color: Colors.white, fontSize: 22)),
                     onTap: () async {
-                      if (allKey.currentState!.validate()) {
-                        allKey.currentState!.save();
+                      if (formKey.currentState!.validate()) {
+                        formKey.currentState!.save();
 
                         setState(() {
                           isLoading = true;

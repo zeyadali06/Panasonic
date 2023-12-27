@@ -22,8 +22,8 @@ class _LoginPageState extends State<LoginPage> {
   String? emailOrUsername;
   String? password;
   bool isLoading = false;
-  GlobalKey<FormState> deviceKey = GlobalKey();
-  GlobalKey<FormState> descriptionKey = GlobalKey();
+  GlobalKey<FormState> formKey = GlobalKey();
+  AutovalidateMode mode = AutovalidateMode.disabled;
 
   @override
   Widget build(BuildContext context) {
@@ -32,145 +32,134 @@ class _LoginPageState extends State<LoginPage> {
       child: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         child: Scaffold(
-          body: ListView(
-            children: [
-              // Animation
-              const SizedBox(height: 20),
-              Lottie.asset('assets/animated_images/animation_llz60pig.json'),
+          body: Form(
+            key: formKey,
+            autovalidateMode: mode,
+            child: ListView(
+              children: [
+                // Animation
+                const SizedBox(height: 20),
+                Lottie.asset('assets/animated_images/animation_llz60pig.json'),
 
-              Padding(
-                padding: const EdgeInsets.all(KHorizontalPadding),
-                child: Column(
-                  children: [
-                    // Panasonic
-                    const Center(child: Text('Panasonic', style: TextStyle(fontSize: 45, fontWeight: FontWeight.w900, color: KPrimayColor))),
-                    const SizedBox(height: 50),
+                Padding(
+                  padding: const EdgeInsets.all(KHorizontalPadding),
+                  child: Column(
+                    children: [
+                      // Panasonic
+                      const Center(child: Text('Panasonic', style: TextStyle(fontSize: 45, fontWeight: FontWeight.w900, color: KPrimayColor))),
+                      const SizedBox(height: 50),
 
-                    // Log In
-                    const Row(children: [Center(child: Text('Log In', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: KPrimayColor)))]),
-                    const SizedBox(height: 25),
+                      // Log In
+                      const Row(children: [Center(child: Text('Log In', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: KPrimayColor)))]),
+                      const SizedBox(height: 25),
 
-                    // Email Or Username
-                    Focus(
-                      onFocusChange: (value) {
-                        deviceKey.currentState!.validate();
-                      },
-                      child: Form(
-                        key: deviceKey,
-                        child: CustomTextFormField(
-                          prefixIcon: Icons.email,
-                          label: 'Email or Username',
-                          hintText: 'Enter Your Email or Username',
-                          onSaved: (value) {},
-                          onChanged: (data) {
-                            deviceKey.currentState!.validate();
-                            emailOrUsername = data;
-                          },
-                        ),
+                      // Email Or Username
+                      CustomTextFormField(
+                        prefixIcon: Icons.email,
+                        label: 'Email or Username',
+                        hintText: 'Enter Your Email or Username',
+                        onSaved: (value) {
+                          emailOrUsername = value;
+                        },
+                        onChanged: (data) {},
                       ),
-                    ),
-                    const SizedBox(height: 10),
+                      const SizedBox(height: 10),
 
-                    // Password
-                    Focus(
-                      onFocusChange: (value) {
-                        descriptionKey.currentState!.validate();
-                      },
-                      child: Form(
-                        key: descriptionKey,
-                        child: CustomTextFormField(
-                          prefixIcon: Icons.lock_outlined,
-                          label: 'Password',
-                          hintText: 'Enter Your Password',
-                          onSaved: (value) {},
-                          obscureText: true,
-                          onChanged: (data) {
-                            descriptionKey.currentState!.validate();
-                            password = data;
-                          },
-                        ),
+                      // Password
+                      CustomTextFormField(
+                        prefixIcon: Icons.lock_outlined,
+                        label: 'Password',
+                        hintText: 'Enter Your Password',
+                        obscureText: true,
+                        onChanged: (data) {},
+                        onSaved: (value) {
+                          password = value;
+                        },
                       ),
-                    ),
-                    const SizedBox(height: 30),
+                      const SizedBox(height: 30),
 
-                    // Login Button
-                    CustomButton(
-                      color: KPrimayColor,
-                      borderColor: KPrimayColor,
-                      widget: const Text('Login', style: TextStyle(fontSize: 23, color: Colors.white, fontWeight: FontWeight.bold)),
-                      onTap: () async {
-                        if (deviceKey.currentState!.validate() && descriptionKey.currentState!.validate()) {
+                      // Login Button
+                      CustomButton(
+                        color: KPrimayColor,
+                        borderColor: KPrimayColor,
+                        widget: const Text('Login', style: TextStyle(fontSize: 23, color: Colors.white, fontWeight: FontWeight.bold)),
+                        onTap: () async {
+                          if (formKey.currentState!.validate()) {
+                            setState(() {
+                              isLoading = true;
+                            });
+                            await loginNormally(context, emailOrUsername!, password!);
+                            setState(() {
+                              isLoading = false;
+                            });
+                          } else {
+                            mode = AutovalidateMode.always;
+                            setState(() {});
+                          }
+                        },
+                      ),
+
+                      // Register
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text("Don't have an account?"),
+                          TextButton(
+                              onPressed: () {
+                                Navigator.pushReplacementNamed(context, 'RegisterPage');
+                              },
+                              child: const Text('Register!', style: TextStyle(fontStyle: FontStyle.italic, color: KPrimayColor, fontWeight: FontWeight.bold))),
+                        ],
+                      ),
+                      const SizedBox(height: 30),
+
+                      // Sign in with Google
+                      GDForSignInMethods(
+                        color: const Color.fromARGB(255, 230, 230, 230),
+                        onTap: () async {
                           setState(() {
                             isLoading = true;
                           });
-                          await loginNormally(context, emailOrUsername!, password!);
+                          try {
+                            UserCredential user = await SignIn.signInWithGoogle();
+
+                            var getData = await FirebaseFirestore.instance.collection(usernameCollection).where('uid', isEqualTo: user.user!.uid).limit(1).get();
+
+                            if (getData.docs.isEmpty) {
+                              throw FirebaseAuthException(code: 'user-not-found');
+                            }
+
+                            AccountData data = AccountData(
+                              email: user.user!.email,
+                              username: getData.docs[0]['username'],
+                              phone: getData.docs[0]['phone'],
+                              uid: user.user!.uid,
+                              dark: getData.docs[0]['dark'],
+                            );
+
+                            Provider.of<ProviderVariables>(context, listen: false).dark = getData.docs[0]['dark'];
+                            Provider.of<ProviderVariables>(context, listen: false).data = data;
+                            Navigator.pushReplacementNamed(context, 'HomeNavigationBar');
+                          } on FirebaseAuthException catch (exc) {
+                            if (exc.code == 'user-not-found') {
+                              await FirebaseAuth.instance.currentUser!.delete();
+                              showSnackBar(context, 'Email not found');
+                            }
+                          } catch (exc) {
+                            showSnackBar(context, 'Error');
+                          }
                           setState(() {
                             isLoading = false;
                           });
-                        }
-                      },
-                    ),
-
-                    // Register
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text("Don't have an account?"),
-                        TextButton(
-                            onPressed: () {
-                              Navigator.pushReplacementNamed(context, 'RegisterPage');
-                            },
-                            child: const Text('Register!', style: TextStyle(fontStyle: FontStyle.italic, color: KPrimayColor, fontWeight: FontWeight.bold))),
-                      ],
-                    ),
-                    const SizedBox(height: 30),
-
-                    // Sign in with Google
-                    GDForSignInMethods(
-                      color: const Color.fromARGB(255, 230, 230, 230),
-                      onTap: () async {
-                        setState(() {
-                          isLoading = true;
-                        });
-                        try {
-                          UserCredential user = await SignIn.signInWithGoogle();
-
-                          var getData = await FirebaseFirestore.instance.collection(usernameCollection).where('uid', isEqualTo: user.user!.uid).limit(1).get();
-
-                          if (getData.docs.isEmpty) {
-                            throw FirebaseAuthException(code: 'user-not-found');
-                          }
-
-                          AccountData data = AccountData(
-                            email: user.user!.email,
-                            username: getData.docs[0]['username'],
-                            phone: getData.docs[0]['phone'],
-                            uid: user.user!.uid,
-                            dark: getData.docs[0]['dark'],
-                          );
-
-                          Provider.of<ProviderVariables>(context, listen: false).dark = getData.docs[0]['dark'];
-                          Provider.of<ProviderVariables>(context, listen: false).data = data;
-                          Navigator.pushReplacementNamed(context, 'HomeNavigationBar');
-                        } on FirebaseAuthException catch (exc) {
-                          if (exc.code == 'user-not-found') {
-                            await FirebaseAuth.instance.currentUser!.delete();
-                            showSnackBar(context, 'Email not found');
-                          }
-                        } catch (exc) {
-                          showSnackBar(context, 'Error');
-                        }
-                        setState(() {
-                          isLoading = false;
-                        });
-                      },
-                      text: 'Sign-In with Google',
-                      asset: 'assets/images/Google.svg.png',
-                    ),
-                  ],
+                        },
+                        text: 'Sign-In with Google',
+                        asset: 'assets/images/Google.svg.png',
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

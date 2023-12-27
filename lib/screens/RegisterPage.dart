@@ -28,11 +28,8 @@ class _RegisterPageState extends State<RegisterPage> {
   late String confirmPassword;
   bool isLoading = false;
 
-  GlobalKey<FormState> usernameKey = GlobalKey();
-  GlobalKey<FormState> emailKey = GlobalKey();
-  GlobalKey<FormState> phoneKey = GlobalKey();
-  GlobalKey<FormState> passwordKey = GlobalKey();
-  GlobalKey<FormState> confirmPasswordKey = GlobalKey();
+  GlobalKey<FormState> formKey = GlobalKey();
+  AutovalidateMode mode = AutovalidateMode.disabled;
 
   @override
   Widget build(BuildContext context) {
@@ -41,208 +38,166 @@ class _RegisterPageState extends State<RegisterPage> {
       child: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         child: Scaffold(
-          body: ListView(
-            children: [
-              // Animation
-              const SizedBox(height: 20),
-              Lottie.asset('assets/animated_images/animation_llz60pig.json'),
+          body: Form(
+            key: formKey,
+            autovalidateMode: mode,
+            child: ListView(
+              children: [
+                // Animation
+                const SizedBox(height: 20),
+                Lottie.asset('assets/animated_images/animation_llz60pig.json'),
 
-              Padding(
-                padding: const EdgeInsets.all(KHorizontalPadding),
-                child: Column(
-                  children: [
-                    // Panasonic
-                    const Center(child: Text('Panasonic', style: TextStyle(fontSize: 45, fontWeight: FontWeight.w900, color: KPrimayColor))),
-                    const SizedBox(height: 50),
+                Padding(
+                  padding: const EdgeInsets.all(KHorizontalPadding),
+                  child: Column(
+                    children: [
+                      // Panasonic
+                      const Center(child: Text('Panasonic', style: TextStyle(fontSize: 45, fontWeight: FontWeight.w900, color: KPrimayColor))),
+                      const SizedBox(height: 50),
 
-                    // Register
-                    const Row(children: [Center(child: Text('Register', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: KPrimayColor)))]),
-                    const SizedBox(height: 25),
+                      // Register
+                      const Row(children: [Center(child: Text('Register', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: KPrimayColor)))]),
+                      const SizedBox(height: 25),
 
-                    // Username
-                    Focus(
-                      onFocusChange: (value) {
-                        usernameKey.currentState!.validate();
-                      },
-                      child: Form(
-                        key: usernameKey,
-                        child: CustomTextFormField(
-                          prefixIcon: Icons.person,
-                          label: 'Username',
-                          hintText: 'Enter Your Username',
-                          inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z0-9]"))],
-                          onSaved: (value) {},
-                          onChanged: (data) {
-                            usernameKey.currentState!.validate();
-                            username = data.trim();
-                          },
-                        ),
+                      // Username
+                      CustomTextFormField(
+                        prefixIcon: Icons.person,
+                        label: 'Username',
+                        hintText: 'Enter Your Username',
+                        inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z0-9]"))],
+                        onChanged: (data) {},
+                        onSaved: (value) {
+                          username = value!.trim();
+                        },
                       ),
-                    ),
-                    const SizedBox(height: 10),
+                      const SizedBox(height: 10),
 
-                    // Email
-                    Focus(
-                      onFocusChange: (value) {
-                        emailKey.currentState!.validate();
-                      },
-                      child: Form(
-                        key: emailKey,
-                        child: CustomTextFormField(
-                          prefixIcon: Icons.email,
-                          label: 'Email',
-                          hintText: 'Enter Your Email',
-                          onSaved: (value) {},
-                          onChanged: (data) {
-                            emailKey.currentState!.validate();
-                            email = data.trim();
-                          },
-                        ),
+                      // Email
+                      CustomTextFormField(
+                        prefixIcon: Icons.email,
+                        label: 'Email',
+                        hintText: 'Enter Your Email',
+                        onChanged: (data) {},
+                        onSaved: (value) {
+                          email = value!.trim();
+                        },
                       ),
-                    ),
-                    const SizedBox(height: 10),
+                      const SizedBox(height: 10),
 
-                    // Phone
-                    Focus(
-                      onFocusChange: (value) {
-                        phoneKey.currentState!.validate();
-                      },
-                      child: Form(
-                        key: phoneKey,
-                        child: CustomTextFormField(
-                          prefixIcon: Icons.phone,
-                          label: 'Phone',
-                          hintText: 'Enter Your Phone Number',
-                          onSaved: (value) {},
-                          onChanged: (data) {
-                            phoneKey.currentState!.validate();
-                            phone = data.trim();
-                          },
-                        ),
+                      // Phone
+                      CustomTextFormField(
+                        prefixIcon: Icons.phone,
+                        label: 'Phone',
+                        hintText: 'Enter Your Phone Number',
+                        onChanged: (data) {},
+                        onSaved: (value) {
+                          phone = value!.trim();
+                        },
                       ),
-                    ),
-                    const SizedBox(height: 10),
+                      const SizedBox(height: 10),
 
-                    // Password
-                    Focus(
-                      onFocusChange: (value) {
-                        passwordKey.currentState!.validate();
-                      },
-                      child: Form(
-                        key: passwordKey,
-                        child: CustomTextFormField(
-                          prefixIcon: Icons.lock_outlined,
-                          label: 'Password',
-                          hintText: 'Enter Your Password',
-                          obscureText: true,
-                          onSaved: (value) {},
-                          onChanged: (data) {
-                            passwordKey.currentState!.validate();
-                            password = data.trim();
-                          },
-                        ),
+                      // Password
+                      CustomTextFormField(
+                        prefixIcon: Icons.lock_outlined,
+                        label: 'Password',
+                        hintText: 'Enter Your Password',
+                        obscureText: true,
+                        onChanged: (data) {},
+                        onSaved: (value) {
+                          password = value!.trim();
+                        },
                       ),
-                    ),
-                    const SizedBox(height: 10),
+                      const SizedBox(height: 10),
 
-                    // Confirm Password
-                    Focus(
-                      onFocusChange: (value) {
-                        confirmPasswordKey.currentState!.validate();
-                      },
-                      child: Form(
-                        key: confirmPasswordKey,
-                        child: CustomTextFormField(
-                          prefixIcon: Icons.lock_outlined,
-                          label: 'Confirm Password',
-                          hintText: 'Confirm Your Password',
-                          obscureText: true,
-                          onSaved: (value) {},
-                          onChanged: (data) {
-                            confirmPasswordKey.currentState!.validate();
-                            confirmPassword = data.trim();
-                          },
-                        ),
+                      // Confirm Password
+                      CustomTextFormField(
+                        prefixIcon: Icons.lock_outlined,
+                        label: 'Confirm Password',
+                        hintText: 'Confirm Your Password',
+                        obscureText: true,
+                        onChanged: (data) {},
+                        onSaved: (value) {
+                          confirmPassword = value!.trim();
+                        },
                       ),
-                    ),
-                    const SizedBox(height: 30),
+                      const SizedBox(height: 30),
 
-                    // Register Button
-                    CustomButton(
-                      color: KPrimayColor,
-                      borderColor: KPrimayColor,
-                      widget: const Text('Register', style: TextStyle(fontSize: 23, color: Colors.white, fontWeight: FontWeight.bold)),
-                      onTap: () async {
-                        if (usernameKey.currentState!.validate() &&
-                            emailKey.currentState!.validate() &&
-                            phoneKey.currentState!.validate() &&
-                            passwordKey.currentState!.validate() &&
-                            confirmPasswordKey.currentState!.validate()) {
-                          setState(() {
-                            isLoading = true;
-                          });
-                          await registerNormally(context, email, username, phone, password, confirmPassword);
-                          setState(() {
-                            isLoading = false;
-                          });
-                        }
-                      },
-                    ),
-
-                    // Login
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text("Already have an account?"),
-                        TextButton(
-                            onPressed: () {
-                              Navigator.pushReplacementNamed(context, 'LoginPage');
-                            },
-                            child: const Text('Login!', style: TextStyle(fontStyle: FontStyle.italic, color: KPrimayColor, fontWeight: FontWeight.bold))),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-
-                    // Sign in with Google
-                    GDForSignInMethods(
-                      color: const Color.fromARGB(255, 230, 230, 230),
-                      onTap: () async {
-                        setState(() {
-                          isLoading = true;
-                        });
-                        try {
-                          UserCredential user = await SignIn.signInWithGoogle();
-
-                          var usernameChecker = await FirebaseFirestore.instance.collection(usernameCollection).where('email', isEqualTo: user.user!.email).limit(1).get();
-                          if (usernameChecker.docs.isNotEmpty) {
-                            await SignOut.signOut();
+                      // Register Button
+                      CustomButton(
+                        color: KPrimayColor,
+                        borderColor: KPrimayColor,
+                        widget: const Text('Register', style: TextStyle(fontSize: 23, color: Colors.white, fontWeight: FontWeight.bold)),
+                        onTap: () async {
+                          if (formKey.currentState!.validate()) {
+                            setState(() {
+                              isLoading = true;
+                            });
+                            await registerNormally(context, email, username, phone, password, confirmPassword);
                             setState(() {
                               isLoading = false;
                             });
-                            throw FirebaseAuthException(code: 'email-already-in-use');
+                          } else {
+                            mode = AutovalidateMode.always;
+                            setState(() {});
                           }
-                          AccountData data = AccountData(email: user.user!.email, uid: user.user!.uid, dark: false);
-                          Provider.of<ProviderVariables>(context, listen: false).dark = false;
-                          Provider.of<ProviderVariables>(context, listen: false).data = data;
-                          Navigator.pushNamed(context, 'CompleteRegisterPage');
-                        } on FirebaseAuthException catch (exc) {
-                          if (exc.code == 'email-already-in-use') {
-                            showSnackBar(context, 'Email already exist');
+                        },
+                      ),
+
+                      // Login
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text("Already have an account?"),
+                          TextButton(
+                              onPressed: () {
+                                Navigator.pushReplacementNamed(context, 'LoginPage');
+                              },
+                              child: const Text('Login!', style: TextStyle(fontStyle: FontStyle.italic, color: KPrimayColor, fontWeight: FontWeight.bold))),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+
+                      // Sign in with Google
+                      GDForSignInMethods(
+                        color: const Color.fromARGB(255, 230, 230, 230),
+                        onTap: () async {
+                          setState(() {
+                            isLoading = true;
+                          });
+                          try {
+                            UserCredential user = await SignIn.signInWithGoogle();
+
+                            var usernameChecker = await FirebaseFirestore.instance.collection(usernameCollection).where('email', isEqualTo: user.user!.email).limit(1).get();
+                            if (usernameChecker.docs.isNotEmpty) {
+                              await SignOut.signOut();
+                              setState(() {
+                                isLoading = false;
+                              });
+                              throw FirebaseAuthException(code: 'email-already-in-use');
+                            }
+                            AccountData data = AccountData(email: user.user!.email, uid: user.user!.uid, dark: false);
+                            Provider.of<ProviderVariables>(context, listen: false).dark = false;
+                            Provider.of<ProviderVariables>(context, listen: false).data = data;
+                            Navigator.pushNamed(context, 'CompleteRegisterPage');
+                          } on FirebaseAuthException catch (exc) {
+                            if (exc.code == 'email-already-in-use') {
+                              showSnackBar(context, 'Email already exist');
+                            }
+                          } catch (_) {
+                            showSnackBar(context, 'Error');
                           }
-                        } catch (_) {
-                          showSnackBar(context, 'Error');
-                        }
-                        setState(() {
-                          isLoading = false;
-                        });
-                      },
-                      text: 'Sign-In with Google',
-                      asset: 'assets/images/Google.svg.png',
-                    ),
-                  ],
+                          setState(() {
+                            isLoading = false;
+                          });
+                        },
+                        text: 'Sign-In with Google',
+                        asset: 'assets/images/Google.svg.png',
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
