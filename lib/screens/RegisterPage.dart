@@ -132,6 +132,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             setState(() {
                               isLoading = true;
                             });
+                            formKey.currentState!.save();
                             await registerNormally(context, email, username, phone, password, confirmPassword);
                             setState(() {
                               isLoading = false;
@@ -248,4 +249,5 @@ Future<void> registerNormally(BuildContext context, String email, String usernam
 
 // zeyad06
 // zeyad@gmail.com
+// 01024855010
 // 06062003

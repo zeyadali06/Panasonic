@@ -88,6 +88,7 @@ class _LoginPageState extends State<LoginPage> {
                             setState(() {
                               isLoading = true;
                             });
+                            formKey.currentState!.save();
                             await loginNormally(context, emailOrUsername!, password!);
                             setState(() {
                               isLoading = false;
