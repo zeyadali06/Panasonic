@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
-import 'package:panasonic/constants.dart';
+import 'package:Panasonic/constants.dart';
 
 class SplachScreen extends StatefulWidget {
   const SplachScreen({super.key});

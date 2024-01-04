@@ -3,9 +3,9 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:panasonic/constants.dart';
-import 'package:panasonic/main.dart';
-import 'package:panasonic/models/ProductModel.dart';
+import 'package:Panasonic/constants.dart';
+import 'package:Panasonic/main.dart';
+import 'package:Panasonic/models/ProductModel.dart';
 import 'package:provider/provider.dart';
 
 Future<void> addProduct({required ProductModel product}) async {

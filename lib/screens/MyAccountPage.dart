@@ -1,12 +1,13 @@
 // ignore_for_file: file_names
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
-import 'package:panasonic/components/helper.dart';
-import 'package:panasonic/constants.dart';
-import 'package:panasonic/main.dart';
+import 'package:Panasonic/components/helper.dart';
+import 'package:Panasonic/constants.dart';
+import 'package:Panasonic/main.dart';
 import 'package:provider/provider.dart';
-import 'package:panasonic/services/Registration.dart';
+import 'package:Panasonic/services/Registration.dart';
 
 class MyAccountPage extends StatefulWidget {
   const MyAccountPage({super.key, required this.refresh});
@@ -41,6 +42,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
             // Photo
             Column(
               children: [
+                // Photo
                 Stack(
                   children: [
                     const CircleAvatar(
@@ -230,18 +232,3 @@ class _MyAccountPageState extends State<MyAccountPage> {
     );
   }
 }
-
-
-// zeyad06
-// zeyad@gmail.com
-// 06062003
-
-
-// zeyadali6060@gmail.com
-
-// Ze06062003#
-
-
-// set@gmail.com
-
-// set.com

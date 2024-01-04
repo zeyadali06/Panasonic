@@ -6,7 +6,7 @@
 
 
     <application
-        android:label="panasonic"
+        android:label="Panasonic"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

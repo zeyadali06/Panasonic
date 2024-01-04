@@ -4,9 +4,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
-import 'package:panasonic/components/helper.dart';
-import 'package:panasonic/constants.dart';
-import 'package:panasonic/main.dart';
+import 'package:Panasonic/components/helper.dart';
+import 'package:Panasonic/constants.dart';
+import 'package:Panasonic/main.dart';
 import 'package:provider/provider.dart';
 
 class CompleteRegisterPage extends StatefulWidget {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:panasonic/constants.dart';
-import 'package:panasonic/models/ProductModel.dart';
+import 'package:Panasonic/constants.dart';
+import 'package:Panasonic/models/ProductModel.dart';
 
 class TFForAddProduct extends StatefulWidget {
   const TFForAddProduct({

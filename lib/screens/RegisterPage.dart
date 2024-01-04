@@ -5,12 +5,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lottie/lottie.dart';
-import 'package:panasonic/components/helper.dart';
-import 'package:panasonic/models/AccountDataModel.dart';
-import 'package:panasonic/services/Registration.dart';
-import 'package:panasonic/constants.dart';
+import 'package:Panasonic/components/helper.dart';
+import 'package:Panasonic/models/AccountDataModel.dart';
+import 'package:Panasonic/services/Registration.dart';
+import 'package:Panasonic/constants.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
-import 'package:panasonic/main.dart';
+import 'package:Panasonic/main.dart';
 import 'package:provider/provider.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -245,9 +245,3 @@ Future<void> registerNormally(BuildContext context, String email, String usernam
     showSnackBar(context, 'Error');
   }
 }
-
-
-// zeyad06
-// zeyad@gmail.com
-// 01024855010
-// 06062003

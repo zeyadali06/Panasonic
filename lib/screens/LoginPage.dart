@@ -1,14 +1,15 @@
 // ignore_for_file: file_names
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-import 'package:panasonic/models/AccountDataModel.dart';
-import 'package:panasonic/services/Registration.dart';
-import 'package:panasonic/components/helper.dart';
-import 'package:panasonic/constants.dart';
+import 'package:Panasonic/models/AccountDataModel.dart';
+import 'package:Panasonic/services/Registration.dart';
+import 'package:Panasonic/components/helper.dart';
+import 'package:Panasonic/constants.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
-import 'package:panasonic/main.dart';
+import 'package:Panasonic/main.dart';
 import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
@@ -230,7 +231,3 @@ Future<void> loginNormally(BuildContext context, String emailOrUsername, String 
     showSnackBar(context, 'Error');
   }
 }
-
-// zeyad@gmail.com
-
-// 06062003

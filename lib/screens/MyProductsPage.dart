@@ -2,10 +2,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
-import 'package:panasonic/constants.dart';
-import 'package:panasonic/main.dart';
-import 'package:panasonic/models/ProductModel.dart';
-import 'package:panasonic/services/ProductServices.dart';
+import 'package:Panasonic/constants.dart';
+import 'package:Panasonic/main.dart';
+import 'package:Panasonic/models/ProductModel.dart';
+import 'package:Panasonic/services/ProductServices.dart';
 import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable
@@ -142,19 +142,3 @@ List<Map<bool, ProductModel>> getProductsData(BuildContext context, AsyncSnapsho
 
   return myProducts;
 }
-
-
-
-// zeyad@gmail.com
-
-// 06062003
-
-
-// zeyadali6060@gmail.com
-
-// Ze06062003#
-
-
-// set@gmail.com
-
-// set.com

@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:number_editing_controller/number_editing_controller.dart';
-import 'package:panasonic/components/helper.dart';
-import 'package:panasonic/constants.dart';
-import 'package:panasonic/main.dart';
-import 'package:panasonic/models/ProductModel.dart';
-import 'package:panasonic/services/ProductServices.dart';
+import 'package:Panasonic/components/helper.dart';
+import 'package:Panasonic/constants.dart';
+import 'package:Panasonic/main.dart';
+import 'package:Panasonic/models/ProductModel.dart';
+import 'package:Panasonic/services/ProductServices.dart';
 import 'package:provider/provider.dart';
 
 class EditOrDeleteProductPage extends StatefulWidget {
@@ -219,18 +219,3 @@ Future<void> sendEditedProductToFireStore(BuildContext context, ProductModel pro
     showSnackBar(context, 'Error, try again');
   }
 }
-
-
-// zeyad@gmail.com
-
-// 06062003
-
-
-// zeyadali6060@gmail.com
-
-// Ze06062003#
-
-
-// set@gmail.com
-
-// set.com

@@ -1,19 +1,19 @@
 // ignore: depend_on_referenced_packages
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:panasonic/NavigationBar.dart';
-import 'package:panasonic/constants.dart';
-import 'package:panasonic/firebase_options.dart';
-import 'package:panasonic/models/AccountDataModel.dart';
-import 'package:panasonic/models/ProductModel.dart';
-import 'package:panasonic/screens/AddProductPage.dart';
-import 'package:panasonic/screens/CompleteRegister.dart';
-import 'package:panasonic/screens/EditOrDeleteProductPage.dart';
-import 'package:panasonic/screens/SearchPage.dart';
-import 'package:panasonic/screens/SplachScreen.dart';
-import 'package:panasonic/screens/LoginPage.dart';
-import 'package:panasonic/screens/MyProductsPage.dart';
-import 'package:panasonic/screens/RegisterPage.dart';
+import 'package:Panasonic/NavigationBar.dart';
+import 'package:Panasonic/constants.dart';
+import 'package:Panasonic/firebase_options.dart';
+import 'package:Panasonic/models/AccountDataModel.dart';
+import 'package:Panasonic/models/ProductModel.dart';
+import 'package:Panasonic/screens/AddProductPage.dart';
+import 'package:Panasonic/screens/CompleteRegister.dart';
+import 'package:Panasonic/screens/EditOrDeleteProductPage.dart';
+import 'package:Panasonic/screens/SearchPage.dart';
+import 'package:Panasonic/screens/SplachScreen.dart';
+import 'package:Panasonic/screens/LoginPage.dart';
+import 'package:Panasonic/screens/MyProductsPage.dart';
+import 'package:Panasonic/screens/RegisterPage.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
