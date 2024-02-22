@@ -1,10 +1,15 @@
 // ignore_for_file: file_names
 
+import 'package:Panasonic/main.dart';
+import 'package:Panasonic/models/AccountDataModel.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:Panasonic/constants.dart';
+import 'package:provider/provider.dart';
 
 class SplachScreen extends StatefulWidget {
   const SplachScreen({super.key});
@@ -28,7 +33,14 @@ class _SplachScreenState extends State<SplachScreen> with SingleTickerProviderSt
       switch (status) {
         case InternetConnectionStatus.connected:
           await Future.delayed(const Duration(seconds: 2));
-          Navigator.pushReplacementNamed(context, 'LoginPage');
+          if (FirebaseAuth.instance.currentUser == null) {
+            Navigator.pushReplacementNamed(context, 'LoginPage');
+          } else {
+            var userdata = await FirebaseFirestore.instance.collection(usernameCollection).doc(FirebaseAuth.instance.currentUser!.uid).get();
+            Provider.of<ProviderVariables>(context, listen: false).data = AccountData.fromFireStore(userdata.data());
+            Provider.of<ProviderVariables>(context, listen: false).dark = Provider.of<ProviderVariables>(context, listen: false).data.dark;
+            Navigator.pushReplacementNamed(context, 'HomeNavigationBar');
+          }
           break;
         case InternetConnectionStatus.disconnected:
           ScaffoldMessenger.of(context).showSnackBar(

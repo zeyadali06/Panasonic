@@ -50,6 +50,11 @@ class GetAccountData {
     QuerySnapshot uidDocument = await FirebaseFirestore.instance.collection(usernameCollection).where('username', isEqualTo: username).limit(1).get();
     return uidDocument.docs[0].id;
   }
+
+  static Future<Map<String, dynamic>?> getUserData(String uid) async {
+    var data = await FirebaseFirestore.instance.collection(usernameCollection).doc(uid).get();
+    return data.data();
+  }
 }
 
 class Register {
