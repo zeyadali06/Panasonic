@@ -61,18 +61,3 @@ class _HomeNavigationBarState extends State<HomeNavigationBar> {
   }
 }
 
-
-
-// zeyad@gmail.com
-
-// 06062003
-
-
-// zeyadali6060@gmail.com
-
-// Ze06062003#
-
-
-// set@gmail.com
-
-// set.com

@@ -78,6 +78,3 @@ class SignOut {
   }
 }
 
-// zeyad06
-// zeyad@gmail.com
-// 06062003
